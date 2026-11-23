@@ -207,6 +207,44 @@ jobs:
           head -40 ci/dump/srg-map.txt
           grep -c . ci/dump/srg-map.txt
 
+          echo "### srg 1.12.2 (notch -> srg)"
+          for u in \
+            "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/1.12.2/mcp-1.12.2-srg.zip" \
+            "https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp/1.12.2/mcp-1.12.2-srg.zip"; do
+            code=$(curl -sSL -o /tmp/srg.zip -w "%{http_code}" --max-time 90 "$u" || echo ERR)
+            echo "$code $(stat -c%s /tmp/srg.zip 2>/dev/null) $u"
+            [ "$code" = "200" ] && break
+          done
+          python3 - <<'PY' > ci/dump/srg-1.12.2.txt 2>&1
+          import os, zipfile
+          try:
+              z = zipfile.ZipFile("/tmp/srg.zip")
+          except Exception as exc:
+              print("cannot open srg:", exc)
+              raise SystemExit
+          print("entries:", z.namelist()[:8])
+          text = ""
+          for entry in z.namelist():
+              if entry.endswith(".srg"):
+                  text += z.read(entry).decode("utf-8", "replace")
+          print("srg chars:", len(text))
+          wanted_classes = {"bib", "blr", "biq", "blk", "bir", "bip", "bit", "bja", "bid", "bhy", "bjb"}
+          print("--- CL ---")
+          for line in text.splitlines():
+              if line.startswith("CL:"):
+                  parts = line.split()
+                  if parts[1] in wanted_classes:
+                      print(line)
+          print("--- FD/MD ---")
+          for line in text.splitlines():
+              if line.startswith(("FD:", "MD:")):
+                  parts = line.split()
+                  owner = parts[1].rsplit("/", 1)[0]
+                  if owner in wanted_classes:
+                      print(line)
+          PY
+          grep -c . ci/dump/srg-1.12.2.txt
+
           echo "### compile"
           if [ -d src/mod/java ] && [ -n "$(find src/mod/java -name '*.java' -print -quit)" ]; then
             javac -encoding UTF-8 -source 8 -target 8 -nowarn -proc:none \
