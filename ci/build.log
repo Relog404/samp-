@@ -10,13 +10,13 @@ lib: org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209 173887
 lib: org.lwjgl.lwjgl:lwjgl:2.9.2-nightly-20140822 1045632
 lib: org.lwjgl.lwjgl:lwjgl_util:2.9.2-nightly-20140822 173887
 total 12344
-drwxr-xr-x  2 runner runner     4096 Nov 23 16:46 .
-drwxrwxrwt 13 root   root       4096 Nov 23 16:46 ..
--rw-r--r--  1 runner runner 10180113 Nov 23 16:46 client.jar
--rw-r--r--  1 runner runner  1045632 Nov 23 16:46 lwjgl-2.9.2-nightly-20140822.jar
--rw-r--r--  1 runner runner  1047168 Nov 23 16:46 lwjgl-2.9.4-nightly-20150209.jar
--rw-r--r--  1 runner runner   173887 Nov 23 16:46 lwjgl_util-2.9.2-nightly-20140822.jar
--rw-r--r--  1 runner runner   173887 Nov 23 16:46 lwjgl_util-2.9.4-nightly-20150209.jar
+drwxr-xr-x  2 runner runner     4096 Nov 23 16:49 .
+drwxrwxrwt 13 root   root       4096 Nov 23 16:49 ..
+-rw-r--r--  1 runner runner 10180113 Nov 23 16:49 client.jar
+-rw-r--r--  1 runner runner  1045632 Nov 23 16:49 lwjgl-2.9.2-nightly-20140822.jar
+-rw-r--r--  1 runner runner  1047168 Nov 23 16:49 lwjgl-2.9.4-nightly-20150209.jar
+-rw-r--r--  1 runner runner   173887 Nov 23 16:49 lwjgl_util-2.9.2-nightly-20140822.jar
+-rw-r--r--  1 runner runner   173887 Nov 23 16:49 lwjgl_util-2.9.4-nightly-20150209.jar
 ### javap dumps
 ### mcp mappings
 zip entries: ['fields.csv', 'methods.csv', 'params.csv']
@@ -58,6 +58,37 @@ FD: bib/aG  <=  guiScale  (field_74335_Z)
 ### srg 1.12.2 (notch -> srg)
 200 653744 https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/1.12.2/mcp-1.12.2-srg.zip
 743
+### csv name checks
+field_146120_f     ('fields.csv', 'width')
+field_146121_g     ('fields.csv', 'height')
+field_146128_h     ('fields.csv', 'x')
+field_146129_i     ('fields.csv', 'y')
+field_146126_j     ('fields.csv', 'displayString')
+field_146127_k     ('fields.csv', 'id')
+field_146124_l     ('fields.csv', 'enabled')
+field_146125_m     ('fields.csv', 'visible')
+field_71466_p      ('fields.csv', 'fontRenderer')
+field_71474_y      ('fields.csv', 'gameSettings')
+field_71462_r      ('fields.csv', 'currentScreen')
+field_71443_c      ('fields.csv', 'displayWidth')
+field_71440_d      ('fields.csv', 'displayHeight')
+field_146292_n     ('fields.csv', 'buttonList')
+field_146294_l     ('fields.csv', 'width')
+field_146295_m     ('fields.csv', 'height')
+field_146297_k     ('fields.csv', 'mc')
+func_78276_b       ('methods.csv', 'drawString')
+func_78256_a       ('methods.csv', 'getStringWidth')
+func_73734_a       ('methods.csv', 'drawRect')
+func_71410_x       ('methods.csv', 'getMinecraft')
+func_71407_l       ('methods.csv', 'runTick')
+func_73863_a       ('methods.csv', 'drawScreen')
+func_175180_a      ('methods.csv', 'renderGameOverlay')
+func_78326_a       ('methods.csv', 'getScaledWidth')
+func_78328_b       ('methods.csv', 'getScaledHeight')
+func_74296_a       ('methods.csv', 'getOptionFloatValue')
+func_74306_a       ('methods.csv', 'setOptionValue')
+func_74304_a       ('methods.csv', 'setOptionFloatValue')
+func_74303_b       ('methods.csv', 'saveOptions')
 ### compile
 javac exit: 0
 build/classes/RelogicClient$Row.class
@@ -71,17 +102,17 @@ jar contents:
 Archive:  ci/out/relogic-module.jar
   Length      Date    Time    Name
 ---------  ---------- -----   ----
-        0  2026-11-23 16:46   META-INF/
-       58  2026-11-23 16:46   META-INF/MANIFEST.MF
-        0  2026-11-23 16:46   relogic/
-        0  2026-11-23 16:46   relogic/mixin/
-      896  2026-11-23 16:46   relogic/mixin/MixinGuiIngame.class
-      855  2026-11-23 16:46   relogic/mixin/MixinMinecraft.class
-     1210  2026-11-23 16:46   relogic/mixin/Bridge.class
-      904  2026-11-23 16:46   relogic/mixin/MixinGuiMainMenu.class
-     2446  2026-11-23 16:46   RelogicClient$Row.class
-    14143  2026-11-23 16:46   RelogicClient.class
-      216  2026-11-23 16:46   mixins.relogic.json
+        0  2026-11-23 16:49   META-INF/
+       58  2026-11-23 16:49   META-INF/MANIFEST.MF
+        0  2026-11-23 16:49   relogic/
+        0  2026-11-23 16:49   relogic/mixin/
+      896  2026-11-23 16:49   relogic/mixin/MixinGuiIngame.class
+      855  2026-11-23 16:49   relogic/mixin/MixinMinecraft.class
+     1210  2026-11-23 16:49   relogic/mixin/Bridge.class
+      904  2026-11-23 16:49   relogic/mixin/MixinGuiMainMenu.class
+     2446  2026-11-23 16:49   RelogicClient$Row.class
+    14143  2026-11-23 16:49   RelogicClient.class
+      216  2026-11-23 16:49   mixins.relogic.json
 ---------                     -------
     20728                     11 files
 ### assemble client jar
@@ -98,23 +129,42 @@ TweakClass: org.spongepowered.asm.launch.MixinTweaker
 
 build_client exit: 0
 ### verify client jar (with real client.jar targets)
-Traceback (most recent call last):
-  File "/home/runner/work/samp-/samp-/tools/verify_client.py", line 51, in <module>
-    SRG_DUMP = ROOT / "ci" / "dump" / "srg-1.12.2.txt"
-               ^^^^
-NameError: name 'ROOT' is not defined
-verify_client exit: 1
-### unit tests
-mixins kept: 1 | username/branding mixins removed: []
-log4j Root level: ['off']
-manifest tweak: True
-
-OK: jar пересобран корректно, лишнего не тронуто
-entries: 6 | changed: 2
-mixins kept: 2 | username/branding mixins removed: []
-log4j Root level: ['off']
-manifest tweak: True
+entries: 4248 | base: 4241 | configs: ['mixins.baritone.json', 'mixins.capi.json', 'mixins.impact.json', 'mixins.relogic.json']
+impact client mixins: 56 | log4j root: off
+mixins: ['MixinGuiMainMenu', 'MixinGuiIngame', 'MixinMinecraft']
+target ok (srg): net.minecraft.client.gui.GuiMainMenu.func_73863_a(IIF)V
+target ok (srg): net.minecraft.client.gui.GuiIngame.func_175180_a(F)V
+target ok (srg): net.minecraft.client.Minecraft.func_71407_l()V
+reflection ok: net.minecraft.client.Minecraft.func_71410_x()Lnet/minecraft/client/Minecraft;
+reflection ok: net.minecraft.client.gui.Gui.func_73734_a(IIIII)V
+reflection ok: net.minecraft.client.gui.FontRenderer.func_78276_b(Ljava/lang/String;III)I
+reflection ok: net.minecraft.client.gui.FontRenderer.func_78256_a(Ljava/lang/String;)I
+reflection ok: net.minecraft.client.gui.ScaledResolution.func_78326_a()I
+reflection ok: net.minecraft.client.gui.ScaledResolution.func_78328_b()I
+reflection ok: net.minecraft.client.settings.GameSettings.func_74296_a(Lnet/minecraft/client/settings/GameSettings$Options;)F
+reflection ok: net.minecraft.client.settings.GameSettings.func_74306_a(Lnet/minecraft/client/settings/GameSettings$Options;I)V
+reflection ok: net.minecraft.client.settings.GameSettings.func_74304_a(Lnet/minecraft/client/settings/GameSettings$Options;F)V
+reflection names ok: 32 checked against mcp-1.12.2-srg
+target ok (notch): blr.a(IIF)V
+target ok (notch): biq.a(F)V
+target ok (notch): bib.t()V
 
 FAILED:
-  - mixin classes missing from jar: gui.MixinNope
+  - MixinGuiMainMenu references unknown classes: ['relogic/mixin/MixinGuiMainMenu', 'relogic/mixin/Bridge']
+  - MixinGuiIngame references unknown classes: ['relogic/mixin/Bridge', 'relogic/mixin/MixinGuiIngame']
+  - MixinMinecraft references unknown classes: ['relogic/mixin/Bridge', 'relogic/mixin/MixinMinecraft']
+verify_client exit: 1
+### unit tests
+reflection ok: net.minecraft.client.gui.Gui.func_73734_a(IIIII)V
+reflection ok: net.minecraft.client.gui.FontRenderer.func_78276_b(Ljava/lang/String;III)I
+reflection ok: net.minecraft.client.gui.FontRenderer.func_78256_a(Ljava/lang/String;)I
+reflection ok: net.minecraft.client.gui.ScaledResolution.func_78326_a()I
+reflection ok: net.minecraft.client.gui.ScaledResolution.func_78328_b()I
+reflection ok: net.minecraft.client.settings.GameSettings.func_74296_a(Lnet/minecraft/client/settings/GameSettings$Options;)F
+reflection ok: net.minecraft.client.settings.GameSettings.func_74306_a(Lnet/minecraft/client/settings/GameSettings$Options;I)V
+reflection ok: net.minecraft.client.settings.GameSettings.func_74304_a(Lnet/minecraft/client/settings/GameSettings$Options;F)V
+reflection names ok: 0 checked against mcp-1.12.2-srg
+client.jar not supplied: target/method checks skipped
+
+OK: клиент собран корректно
 jar exit: 0
