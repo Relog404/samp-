@@ -10,13 +10,13 @@ lib: org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209 173887
 lib: org.lwjgl.lwjgl:lwjgl:2.9.2-nightly-20140822 1045632
 lib: org.lwjgl.lwjgl:lwjgl_util:2.9.2-nightly-20140822 173887
 total 12344
-drwxr-xr-x  2 runner runner     4096 Nov 23 16:00 .
-drwxrwxrwt 14 root   root       4096 Nov 23 16:00 ..
--rw-r--r--  1 runner runner 10180113 Nov 23 16:00 client.jar
--rw-r--r--  1 runner runner  1045632 Nov 23 16:00 lwjgl-2.9.2-nightly-20140822.jar
--rw-r--r--  1 runner runner  1047168 Nov 23 16:00 lwjgl-2.9.4-nightly-20150209.jar
--rw-r--r--  1 runner runner   173887 Nov 23 16:00 lwjgl_util-2.9.2-nightly-20140822.jar
--rw-r--r--  1 runner runner   173887 Nov 23 16:00 lwjgl_util-2.9.4-nightly-20150209.jar
+drwxr-xr-x  2 runner runner     4096 Nov 23 16:02 .
+drwxrwxrwt 14 root   root       4096 Nov 23 16:02 ..
+-rw-r--r--  1 runner runner 10180113 Nov 23 16:02 client.jar
+-rw-r--r--  1 runner runner  1045632 Nov 23 16:02 lwjgl-2.9.2-nightly-20140822.jar
+-rw-r--r--  1 runner runner  1047168 Nov 23 16:02 lwjgl-2.9.4-nightly-20150209.jar
+-rw-r--r--  1 runner runner   173887 Nov 23 16:02 lwjgl_util-2.9.2-nightly-20140822.jar
+-rw-r--r--  1 runner runner   173887 Nov 23 16:02 lwjgl_util-2.9.4-nightly-20150209.jar
 ### javap dumps
 ### mcp mappings
 zip entries: ['fields.csv', 'methods.csv', 'params.csv']
@@ -56,61 +56,31 @@ FD: bib/aE  <=  gammaSetting  (field_74333_Y)
 FD: bib/aG  <=  guiScale  (field_74335_Z)
 24
 ### compile
-src/mod/java/RelogicClient.java:4: error: package org.lwjgl.input does not exist
-import org.lwjgl.input.Keyboard;
-                      ^
-src/mod/java/RelogicClient.java:5: error: package org.lwjgl.input does not exist
-import org.lwjgl.input.Mouse;
-                      ^
-src/mod/java/RelogicClient.java:6: error: package org.lwjgl.opengl does not exist
-import org.lwjgl.opengl.Display;
-                       ^
-src/mod/java/RelogicClient.java:7: error: package org.lwjgl.opengl does not exist
-import org.lwjgl.opengl.GL11;
-                       ^
-src/mod/java/RelogicClient.java:312: error: cannot find symbol
-        private bid$a resolve() {
-                ^
-  symbol:   class bid$a
-  location: class Row
-
-
-An annotation processor threw an uncaught exception.
-Consult the following stack trace for details.
-java.lang.NoClassDefFoundError: com/google/gson/JsonParseException
-	at org.spongepowered.tools.obfuscation.ReferenceManager.<init>(ReferenceManager.java:90)
-	at org.spongepowered.tools.obfuscation.ObfuscationManager.<init>(ObfuscationManager.java:72)
-	at org.spongepowered.tools.obfuscation.AnnotatedMixins.<init>(AnnotatedMixins.java:147)
-	at org.spongepowered.tools.obfuscation.AnnotatedMixins.getMixinsForEnvironment(AnnotatedMixins.java:589)
-	at org.spongepowered.tools.obfuscation.MixinObfuscationProcessor.init(MixinObfuscationProcessor.java:57)
-	at com.sun.tools.javac.processing.JavacProcessingEnvironment$ProcessorState.<init>(JavacProcessingEnvironment.java:508)
-	at com.sun.tools.javac.processing.JavacProcessingEnvironment$DiscoveredProcessors$ProcessorStateIterator.next(JavacProcessingEnvironment.java:605)
-	at com.sun.tools.javac.processing.JavacProcessingEnvironment.discoverAndRunProcs(JavacProcessingEnvironment.java:698)
-	at com.sun.tools.javac.processing.JavacProcessingEnvironment.access$1800(JavacProcessingEnvironment.java:91)
-	at com.sun.tools.javac.processing.JavacProcessingEnvironment$Round.run(JavacProcessingEnvironment.java:1043)
-	at com.sun.tools.javac.processing.JavacProcessingEnvironment.doProcessing(JavacProcessingEnvironment.java:1184)
-	at com.sun.tools.javac.main.JavaCompiler.processAnnotations(JavaCompiler.java:1170)
-	at com.sun.tools.javac.main.JavaCompiler.compile(JavaCompiler.java:856)
-	at com.sun.tools.javac.main.Main.compile(Main.java:523)
-	at com.sun.tools.javac.main.Main.compile(Main.java:381)
-	at com.sun.tools.javac.main.Main.compile(Main.java:370)
-	at com.sun.tools.javac.main.Main.compile(Main.java:361)
-	at com.sun.tools.javac.Main.compile(Main.java:56)
-	at com.sun.tools.javac.Main.main(Main.java:42)
-Caused by: java.lang.ClassNotFoundException: com.google.gson.JsonParseException
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:387)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:418)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:351)
-	... 19 more
-javac exit: 3
+javac exit: 0
+build/classes/RelogicClient$OptionAccess.class
+build/classes/RelogicClient$Row.class
+build/classes/RelogicClient.class
 build/classes/mixins.relogic.json
+build/classes/relogic/mixin/Bridge.class
+build/classes/relogic/mixin/MixinGuiIngame.class
+build/classes/relogic/mixin/MixinGuiMainMenu.class
+build/classes/relogic/mixin/MixinMinecraft.class
 jar contents:
 Archive:  ci/out/relogic-module.jar
   Length      Date    Time    Name
 ---------  ---------- -----   ----
-        0  2026-11-23 16:00   META-INF/
-       58  2026-11-23 16:00   META-INF/MANIFEST.MF
-      216  2026-11-23 16:00   mixins.relogic.json
+        0  2026-11-23 16:02   META-INF/
+       58  2026-11-23 16:02   META-INF/MANIFEST.MF
+        0  2026-11-23 16:02   relogic/
+        0  2026-11-23 16:02   relogic/mixin/
+      746  2026-11-23 16:02   relogic/mixin/MixinGuiIngame.class
+      710  2026-11-23 16:02   relogic/mixin/MixinMinecraft.class
+     1210  2026-11-23 16:02   relogic/mixin/Bridge.class
+      752  2026-11-23 16:02   relogic/mixin/MixinGuiMainMenu.class
+     2292  2026-11-23 16:02   RelogicClient$Row.class
+     8238  2026-11-23 16:02   RelogicClient.class
+     2104  2026-11-23 16:02   RelogicClient$OptionAccess.class
+      216  2026-11-23 16:02   mixins.relogic.json
 ---------                     -------
-      274                     3 files
+    16326                     12 files
 jar exit: 0
