@@ -217,10 +217,31 @@ jobs:
             find build/classes -type f | sort
             (cd build/classes && jar cf ../../ci/out/relogic-module.jar . )
             echo "jar contents:" && unzip -l ci/out/relogic-module.jar | tail -20
+
+            echo "### assemble client jar"
+            python3 tools/build_client.py --module ci/out/relogic-module.jar --out ci/out/RELOG-IC-4.9.1-1.12.2.jar
+            echo "build_client exit: $?"
+
+            echo "### verify client jar (with real client.jar targets)"
+            python3 tools/verify_client.py ci/out/RELOG-IC-4.9.1-1.12.2.jar --client /tmp/mc/client.jar
+            echo "verify_client exit: $?"
+
+            echo "### unit tests"
+            python3 -m unittest discover -s tests -v 2>&1 | tail -12
             echo "jar exit: $?"
           else
             echo "no sources yet"
           fi
+
+      - name: Upload jars
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relogic-jars
+          path: |
+            ci/out/relogic-module.jar
+            ci/out/RELOG-IC-4.9.1-1.12.2.jar
+          if-no-files-found: warn
 
       - name: Commit results
         if: always()
