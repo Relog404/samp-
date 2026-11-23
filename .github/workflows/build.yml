@@ -228,7 +228,7 @@ jobs:
               if entry.endswith(".srg"):
                   text += z.read(entry).decode("utf-8", "replace")
           print("srg chars:", len(text))
-          wanted_classes = {"bib", "blr", "biq", "blk", "bir", "bip", "bit", "bja", "bid", "bhy", "bjb"}
+          wanted_classes = {"bib", "blr", "biq", "blk", "bir", "bip", "bit", "bja", "bid", "bhy", "bjb", "bid$a"}
           print("--- CL ---")
           for line in text.splitlines():
               if line.startswith("CL:"):
@@ -240,6 +240,8 @@ jobs:
               if line.startswith(("FD:", "MD:")):
                   parts = line.split()
                   owner = parts[1].rsplit("/", 1)[0]
+                  if owner.endswith("$Options"):
+                      owner = owner.split("$")[0] + "$a"
                   if owner in wanted_classes:
                       print(line)
           PY

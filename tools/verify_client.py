@@ -31,12 +31,40 @@ REQUIRED_CONFIGS = {"mixins.capi.json", "mixins.impact.json", "mixins.baritone.j
 # entries build_client.py intentionally rewrites
 ALLOWED_CHANGED = {"META-INF/MANIFEST.MF", "mixins.impact.json", "log4j2.xml"}
 
-# mixin class -> (target class, target method name, descriptor)
+# mixin class -> [(target class, method, descriptor)]; plain names live in the
+# obfuscated client.jar, dotted names are the SRG names seen at runtime.
 TARGETS = {
-    "MixinGuiMainMenu": ("blr", "a", "(IIF)V"),
-    "MixinGuiIngame": ("biq", "a", "(F)V"),
-    "MixinMinecraft": ("bib", "t", "()V"),
+    "MixinGuiMainMenu": [
+        ("blr", "a", "(IIF)V"),
+        ("net.minecraft.client.gui.GuiMainMenu", "func_73863_a", "(IIF)V"),
+    ],
+    "MixinGuiIngame": [
+        ("biq", "a", "(F)V"),
+        ("net.minecraft.client.gui.GuiIngame", "func_175180_a", "(F)V"),
+    ],
+    "MixinMinecraft": [
+        ("bib", "t", "()V"),
+        ("net.minecraft.client.Minecraft", "func_71407_l", "()V"),
+    ],
 }
+
+SRG_DUMP = ROOT / "ci" / "dump" / "srg-1.12.2.txt"
+
+
+def srg_methods(text: str):
+    """Parse FD/MD lines into {(srg owner, srg member, srg descriptor)}."""
+    found = set()
+    for line in text.splitlines():
+        if not line.startswith(("MD:", "FD:")):
+            continue
+        parts = line.split()
+        if len(parts) < 4:
+            continue
+        target = parts[3] if parts[0] == "MD:" else parts[2]
+        owner, _, member = target.rpartition("/")
+        descriptor = parts[4] if parts[0] == "MD:" and len(parts) > 4 else ""
+        found.add((owner, member, descriptor))
+    return found
 
 
 def build_client_mixins():
@@ -95,6 +123,38 @@ def parse_class(data: bytes):
                 classes.add(name)
 
     return classes
+
+
+def class_strings(data: bytes):
+    """Return the UTF8 constants that look like SRG class/member names."""
+    pos = 8
+    count = int.from_bytes(data[pos:pos + 2], "big")
+    pos += 2
+    index = 1
+    names = set()
+    while index < count:
+        tag = data[pos]
+        pos += 1
+        if tag == 1:
+            length = int.from_bytes(data[pos:pos + 2], "big")
+            pos += 2
+            value = data[pos:pos + length].decode("utf-8", "replace")
+            pos += length
+            if value.startswith(("net.minecraft.", "func_", "field_")):
+                names.add(value)
+        elif tag in (7, 8, 16, 19, 20):
+            pos += 2
+        elif tag == 15:
+            pos += 3
+        elif tag in (3, 4, 9, 10, 11, 12, 17, 18):
+            pos += 4
+        elif tag in (5, 6):
+            pos += 8
+            index += 1
+        else:
+            raise ValueError("bad constant pool tag %d" % tag)
+        index += 1
+    return names
 
 
 def methods_of(data: bytes):
@@ -216,19 +276,26 @@ def main(argv) -> int:
         print("impact client mixins: %d | log4j root: %s" % (len(impact.get("client", [])), level.group(1) if level else "?"))
         print("mixins: %s" % classes)
 
+        srg_text = SRG_DUMP.read_text(encoding="utf-8") if SRG_DUMP.exists() else ""
+
         if client_path and client_path.exists():
             with zipfile.ZipFile(client_path) as client:
                 client_names = set(client.namelist())
-                for entry, (target, method, desc) in TARGETS.items():
-                    path = target + ".class"
-                    if path not in client_names:
-                        errors.append("target class not in client.jar: %s" % target)
-                        continue
-                    found = methods_of(client.read(path))
-                    if (method, desc) not in found:
-                        errors.append("target method missing: %s.%s%s" % (target, method, desc))
-                    else:
-                        print("target ok: %s.%s%s" % (target, method, desc))
+                for entry, variants in TARGETS.items():
+                    for target, method, desc in variants:
+                        if "." not in target:
+                            path = target + ".class"
+                            if path not in client_names:
+                                errors.append("target class not in client.jar: %s" % target)
+                                continue
+                            if (method, desc) not in methods_of(client.read(path)):
+                                errors.append("target method missing: %s.%s%s" % (target, method, desc))
+                            else:
+                                print("target ok (notch): %s.%s%s" % (target, method, desc))
+                        elif srg_methods(srg_text) and (target, method, desc) not in srg_methods(srg_text):
+                            errors.append("SRG target unknown: %s.%s%s" % (target, method, desc))
+                        else:
+                            print("target ok (srg): %s.%s%s" % (target, method, desc))
                 for entry in classes:
                     path = "%s/%s.class" % (package, entry)
                     refs = parse_class(jar.read(path))
@@ -239,6 +306,14 @@ def main(argv) -> int:
                                and r + ".class" not in names]
                     if unknown:
                         errors.append("%s references unknown classes: %s" % (entry, unknown))
+
+                if srg_text:
+                    names = class_strings(jar.read("RelogicClient.class"))
+                    missing_names = sorted(n for n in names if n not in srg_text)
+                    if missing_names:
+                        errors.append("reflection names not in srg dump: %s" % ", ".join(missing_names[:6]))
+                    else:
+                        print("reflection names ok: %d checked against srg" % len(names))
         else:
             print("client.jar not supplied: target/method checks skipped")
 
