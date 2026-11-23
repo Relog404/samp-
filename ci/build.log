@@ -10,13 +10,13 @@ lib: org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209 173887
 lib: org.lwjgl.lwjgl:lwjgl:2.9.2-nightly-20140822 1045632
 lib: org.lwjgl.lwjgl:lwjgl_util:2.9.2-nightly-20140822 173887
 total 12344
-drwxr-xr-x  2 runner runner     4096 Nov 23 16:49 .
-drwxrwxrwt 13 root   root       4096 Nov 23 16:49 ..
--rw-r--r--  1 runner runner 10180113 Nov 23 16:49 client.jar
--rw-r--r--  1 runner runner  1045632 Nov 23 16:49 lwjgl-2.9.2-nightly-20140822.jar
--rw-r--r--  1 runner runner  1047168 Nov 23 16:49 lwjgl-2.9.4-nightly-20150209.jar
--rw-r--r--  1 runner runner   173887 Nov 23 16:49 lwjgl_util-2.9.2-nightly-20140822.jar
--rw-r--r--  1 runner runner   173887 Nov 23 16:49 lwjgl_util-2.9.4-nightly-20150209.jar
+drwxr-xr-x  2 runner runner     4096 Nov 23 16:51 .
+drwxrwxrwt 14 root   root       4096 Nov 23 16:51 ..
+-rw-r--r--  1 runner runner 10180113 Nov 23 16:51 client.jar
+-rw-r--r--  1 runner runner  1045632 Nov 23 16:51 lwjgl-2.9.2-nightly-20140822.jar
+-rw-r--r--  1 runner runner  1047168 Nov 23 16:51 lwjgl-2.9.4-nightly-20150209.jar
+-rw-r--r--  1 runner runner   173887 Nov 23 16:51 lwjgl_util-2.9.2-nightly-20140822.jar
+-rw-r--r--  1 runner runner   173887 Nov 23 16:51 lwjgl_util-2.9.4-nightly-20150209.jar
 ### javap dumps
 ### mcp mappings
 zip entries: ['fields.csv', 'methods.csv', 'params.csv']
@@ -102,19 +102,19 @@ jar contents:
 Archive:  ci/out/relogic-module.jar
   Length      Date    Time    Name
 ---------  ---------- -----   ----
-        0  2026-11-23 16:49   META-INF/
-       58  2026-11-23 16:49   META-INF/MANIFEST.MF
-        0  2026-11-23 16:49   relogic/
-        0  2026-11-23 16:49   relogic/mixin/
-      896  2026-11-23 16:49   relogic/mixin/MixinGuiIngame.class
-      855  2026-11-23 16:49   relogic/mixin/MixinMinecraft.class
-     1210  2026-11-23 16:49   relogic/mixin/Bridge.class
-      904  2026-11-23 16:49   relogic/mixin/MixinGuiMainMenu.class
-     2446  2026-11-23 16:49   RelogicClient$Row.class
-    14143  2026-11-23 16:49   RelogicClient.class
-      216  2026-11-23 16:49   mixins.relogic.json
+        0  2026-11-23 16:51   META-INF/
+       58  2026-11-23 16:51   META-INF/MANIFEST.MF
+        0  2026-11-23 16:51   relogic/
+        0  2026-11-23 16:51   relogic/mixin/
+      896  2026-11-23 16:51   relogic/mixin/MixinGuiIngame.class
+      855  2026-11-23 16:51   relogic/mixin/MixinMinecraft.class
+     1210  2026-11-23 16:51   relogic/mixin/Bridge.class
+      904  2026-11-23 16:51   relogic/mixin/MixinGuiMainMenu.class
+     2617  2026-11-23 16:51   RelogicClient$Row.class
+    14299  2026-11-23 16:51   RelogicClient.class
+      216  2026-11-23 16:51   mixins.relogic.json
 ---------                     -------
-    20728                     11 files
+    21055                     11 files
 ### assemble client jar
 base  : /home/runner/work/samp-/samp-/Impact-4.9.1-1.12.2.jar
 module: ci/out/relogic-module.jar (7 entries)
@@ -144,18 +144,18 @@ reflection ok: net.minecraft.client.gui.ScaledResolution.func_78328_b()I
 reflection ok: net.minecraft.client.settings.GameSettings.func_74296_a(Lnet/minecraft/client/settings/GameSettings$Options;)F
 reflection ok: net.minecraft.client.settings.GameSettings.func_74306_a(Lnet/minecraft/client/settings/GameSettings$Options;I)V
 reflection ok: net.minecraft.client.settings.GameSettings.func_74304_a(Lnet/minecraft/client/settings/GameSettings$Options;F)V
-reflection names ok: 32 checked against mcp-1.12.2-srg
+reflection ok: net.minecraft.client.settings.GameSettings.func_74303_b()V
+reflection names ok: 33 checked against mcp-1.12.2-srg
 target ok (notch): blr.a(IIF)V
 target ok (notch): biq.a(F)V
 target ok (notch): bib.t()V
 
 FAILED:
-  - MixinGuiMainMenu references unknown classes: ['relogic/mixin/MixinGuiMainMenu', 'relogic/mixin/Bridge']
+  - MixinGuiMainMenu references unknown classes: ['relogic/mixin/Bridge', 'relogic/mixin/MixinGuiMainMenu']
   - MixinGuiIngame references unknown classes: ['relogic/mixin/Bridge', 'relogic/mixin/MixinGuiIngame']
-  - MixinMinecraft references unknown classes: ['relogic/mixin/Bridge', 'relogic/mixin/MixinMinecraft']
+  - MixinMinecraft references unknown classes: ['relogic/mixin/MixinMinecraft', 'relogic/mixin/Bridge']
 verify_client exit: 1
 ### unit tests
-reflection ok: net.minecraft.client.gui.Gui.func_73734_a(IIIII)V
 reflection ok: net.minecraft.client.gui.FontRenderer.func_78276_b(Ljava/lang/String;III)I
 reflection ok: net.minecraft.client.gui.FontRenderer.func_78256_a(Ljava/lang/String;)I
 reflection ok: net.minecraft.client.gui.ScaledResolution.func_78326_a()I
@@ -163,6 +163,7 @@ reflection ok: net.minecraft.client.gui.ScaledResolution.func_78328_b()I
 reflection ok: net.minecraft.client.settings.GameSettings.func_74296_a(Lnet/minecraft/client/settings/GameSettings$Options;)F
 reflection ok: net.minecraft.client.settings.GameSettings.func_74306_a(Lnet/minecraft/client/settings/GameSettings$Options;I)V
 reflection ok: net.minecraft.client.settings.GameSettings.func_74304_a(Lnet/minecraft/client/settings/GameSettings$Options;F)V
+reflection ok: net.minecraft.client.settings.GameSettings.func_74303_b()V
 reflection names ok: 0 checked against mcp-1.12.2-srg
 client.jar not supplied: target/method checks skipped
 
