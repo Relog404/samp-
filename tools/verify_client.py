@@ -65,6 +65,7 @@ REFLECTION_SIGNATURES = [
      "(Lnet/minecraft/client/settings/GameSettings$Options;I)V"),
     ("net.minecraft.client.settings.GameSettings", "func_74304_a",
      "(Lnet/minecraft/client/settings/GameSettings$Options;F)V"),
+    ("net.minecraft.client.settings.GameSettings", "func_74303_b", "()V"),
 ]
 
 

@@ -120,25 +120,46 @@ src/mod/resources/mixins.relogic.json      конфиг миксинов
 `blk.n` (список кнопок) и `bja.f/g/h/i` (рамка кнопки), потому что это одна и
 та же «безымянная» пакетная область.
 
-**Проверенные по `javap` имена (1.12.2):**
+**Почему не обфусцированные имена.** Первый запуск упал:
 
-| Обфусцировано | Что это | Нужное нам |
-|---|---|---|
-| `bib` | `Minecraft` | `z()` = `getMinecraft`, `k` = FontRenderer, `t` = GameSettings |
-| `blk` | `GuiScreen` | `n` = buttonList, `l/m` = width/height |
-| `blr` | `GuiMainMenu` | `a(IIF)V` = `drawScreen` |
-| `biq` | `GuiIngame` | `a(F)V` = `renderGameOverlay` |
-| `bir` | `Gui` | `a(IIIII)V` = `drawRect` |
-| `bja` | `GuiButton` | `f/g/h/i` = x/y/w/h, `k` = id, `j` = текст |
-| `bip` | `FontRenderer` | `a(String,III)` = drawString, `a(String)` = ширина |
-| `bit` | `ScaledResolution` | `bit(bib)`, `a()`, `b()` |
-| `bid` | `GameSettings` | `a(bid$a)` = getOptionFloatValue, `a(bid$a,I)` / `a(bid$a,F)` = setOptionValue |
+```
+Mixin apply failed ... @Inject ... could not find any targets matching 't'
+in the target class net.minecraft.client.Minecraft. No refMap loaded.
+```
 
-Enum настроек (`bid$a`, `GameSettings.Options`) читается рефлексией по
-`name()` — константы сохраняют исходные имена (`RENDER_DISTANCE`, `PARTICLES`,
-`RENDER_CLOUDS`, `AMBIENT_OCCLUSION`, `GRAPHICS`, `MIPMAP_LEVELS`,
-`FRAMERATE_LIMIT`, `FOV`, `GAMMA`, `CHAT_OPACITY`, `CHAT_SCALE`, ...), поэтому
-никакие поля `GameSettings` угадывать не нужно.
+Forge 1.12.2 переименовывает ванильные классы в SRG-имена **в рантайме**:
+`bib` → `net.minecraft.client.Minecraft`, `bib.t()` → `func_71407_l()`,
+`bib.k` → `field_71466_p` и т.д. Поэтому модуль больше не ссылается на
+`bib/blk/...` напрямую, а работает через рефлексию по SRG-именам, взятым из
+официального `mcp-1.12.2-srg` (и сверенным с `fields.csv`/`methods.csv`).
+
+Каждое имя проверяется в CI (`tools/verify_client.py`):
+
+```
+target ok (srg): net.minecraft.client.gui.GuiMainMenu.func_73863_a(IIF)V
+target ok (srg): net.minecraft.client.gui.GuiIngame.func_175180_a(F)V
+target ok (srg): net.minecraft.client.Minecraft.func_71407_l()V
+reflection ok: net.minecraft.client.gui.Gui.func_73734_a(IIIII)V
+reflection ok: net.minecraft.client.settings.GameSettings.func_74296_a(...Options;)F
+reflection names ok: 32 checked against mcp-1.12.2-srg
+```
+
+| Что нужно | SRG-имя в рантайме |
+|---|---|
+| `Minecraft.getMinecraft()` | `func_71410_x` |
+| `Minecraft.fontRenderer` / `gameSettings` / `currentScreen` | `field_71466_p` / `field_71474_y` / `field_71462_r` |
+| `Minecraft.runTick()` | `func_71407_l` |
+| `GuiScreen.buttonList` / `width` / `height` | `field_146292_n` / `field_146294_l` / `field_146295_m` |
+| `GuiButton.x` / `y` / `width` / `height` / `id` / `displayString` | `field_146128_h` / `field_146129_i` / `field_146120_f` / `field_146121_g` / `field_146127_k` / `field_146126_j` |
+| `FontRenderer.drawString` / `getStringWidth` | `func_78276_b` / `func_78256_a` |
+| `Gui.drawRect` | `func_73734_a` |
+| `ScaledResolution.getScaledWidth/Height` | `func_78326_a` / `func_78328_b` |
+| `GameSettings.getOptionFloatValue/setOptionValue/setOptionFloatValue/saveOptions` | `func_74296_a` / `func_74306_a` / `func_74304_a` / `func_74303_b` |
+| `GuiMainMenu.drawScreen` / `GuiIngame.renderGameOverlay` | `func_73863_a(IIF)V` / `func_175180_a(F)V` |
+
+Миксины сделаны «двойными»: по одному `@Inject` на SRG-имя и на старое
+обфусцированное, оба с `require = 0`. В рантайме срабатывает тот, который
+существует, а второй тихо пропускается — вместо жёсткого краша, как было.
 
 **Что делает модуль в игре:**
 

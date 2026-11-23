@@ -64,6 +64,7 @@ public final class RelogicClient {
     private static final String M_OPTION_GET_FLOAT = "func_74296_a";
     private static final String M_OPTION_SET_INT = "func_74306_a";
     private static final String M_OPTION_SET_FLOAT = "func_74304_a";
+    private static final String M_SAVE_OPTIONS = "func_74303_b";
 
     private static final String F_FONT = "field_71466_p";
     private static final String F_SETTINGS = "field_71474_y";
@@ -123,6 +124,7 @@ public final class RelogicClient {
     private static Method mOptionGetFloat;
     private static Method mOptionSetInt;
     private static Method mOptionSetFloat;
+    private static Method mSaveOptions;
     private static Constructor<?> ctorScaled;
 
     private static Field fFont;
@@ -198,6 +200,7 @@ public final class RelogicClient {
             mOptionGetFloat = clsSettings.getMethod(M_OPTION_GET_FLOAT, clsOptions);
             mOptionSetInt = clsSettings.getMethod(M_OPTION_SET_INT, clsOptions, int.class);
             mOptionSetFloat = clsSettings.getMethod(M_OPTION_SET_FLOAT, clsOptions, float.class);
+            mSaveOptions = clsSettings.getMethod(M_SAVE_OPTIONS);
         } catch (Throwable t) {
             broken = true;
         }
@@ -584,6 +587,7 @@ public final class RelogicClient {
             try {
                 if (!floating) {
                     mOptionSetInt.invoke(settings, opt, Integer.valueOf(dir));
+                    persist(settings);
                     return;
                 }
                 float current = ((Float) mOptionGetFloat.invoke(settings, opt)).floatValue();
@@ -595,8 +599,17 @@ public final class RelogicClient {
                     next = max;
                 }
                 mOptionSetFloat.invoke(settings, opt, Float.valueOf(next));
+                persist(settings);
             } catch (Throwable ignored) {
                 // ignore
+            }
+        }
+
+        private static void persist(Object settings) {
+            try {
+                mSaveOptions.invoke(settings);
+            } catch (Throwable ignored) {
+                // not critical
             }
         }
 
