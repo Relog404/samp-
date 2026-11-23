@@ -66,14 +66,26 @@ class ModuleTest(unittest.TestCase):
                 self.assertIn(path, jar.namelist())
             self.assertIn("RelogicClient.class", jar.namelist())
 
-    def test_module_classes_reference_obfuscated_client(self):
+    def test_module_has_no_notch_references(self):
+        """After the runtime crash we must never link against obfuscated names."""
         if not MODULE.exists():
             self.skipTest("module jar отсутствует (собирается в CI)")
         with zipfile.ZipFile(MODULE) as jar:
             refs = verify_client.parse_class(jar.read("RelogicClient.class"))
-        # эти имена проверены по дампам javap client.jar 1.12.2
-        for name in ("bib", "blk", "bir", "bip", "bit", "bja"):
-            self.assertIn(name, refs)
+        notch = {"bib", "blk", "blr", "biq", "bir", "bip", "bit", "bja", "bid", "bhy"}
+        self.assertFalse(notch & refs, "module still references notch classes: %s" % (notch & refs))
+        self.assertIn("org/lwjgl/opengl/GL11", refs)
+
+    def test_module_uses_srg_names(self):
+        if not MODULE.exists():
+            self.skipTest("module jar отсутствует (собирается в CI)")
+        with zipfile.ZipFile(MODULE) as jar:
+            names = verify_client.class_strings(jar.read("RelogicClient.class"))
+        for name in ("net.minecraft.client.Minecraft", "func_71410_x",
+                     "field_71466_p", "func_73863_a", "func_74303_b"):
+            self.assertIn(name, names)
+        for name in names:
+            self.assertTrue(name.startswith(("net.minecraft.", "func_", "field_")), name)
 
     def test_mixin_targets_declared(self):
         if not MODULE.exists():
