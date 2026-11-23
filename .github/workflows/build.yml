@@ -5,12 +5,22 @@ on:
     branches: ["arena/07b9612e-samp"]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
+env:
+  # какие классы обфусцированного клиента нам нужны — дампим их сигнатуры
+  PROBE_CLASSES: >-
+    bib blk bja bjb bid bip biq bit blm bze bzf bje bjd bjc
+
 jobs:
-  probe:
-    name: probe toolchain + MC names
+  build:
+    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup JDK 8
         uses: actions/setup-java@v4
@@ -23,24 +33,62 @@ jobs:
           java -version
           javac -version
 
-      - name: Fetch Minecraft 1.12.2 client jar
+      - name: Fetch Minecraft 1.12.2 client jar + LWJGL
         run: |
+          mkdir -p /tmp/mc
           python3 - <<'PY'
           import json, urllib.request
           man = json.load(urllib.request.urlopen("https://launchermeta.mojang.com/mc/game/version_manifest.json"))
           entry = [v for v in man["versions"] if v["id"] == "1.12.2"][0]
           meta = json.load(urllib.request.urlopen(entry["url"]))
           data = urllib.request.urlopen(meta["downloads"]["client"]["url"]).read()
-          open("/tmp/client.jar", "wb").write(data)
-          print("client.jar bytes:", len(data))
-          libs = [l["name"] for l in meta["libraries"] if "natives" not in l.get("name", "")]
-          open("/tmp/libs.txt", "w").write("\n".join(libs))
-          print("libraries:", len(libs))
+          open("/tmp/mc/client.jar", "wb").write(data)
+          print("client.jar", len(data))
           PY
+          curl -sSL -o /tmp/mc/lwjgl.jar https://repo1.maven.org/maven2/org/lwjgl/lwjgl/lwjgl/2.9.4-nightly-20150209/lwjgl-2.9.4-nightly-20150209.jar
+          curl -sSL -o /tmp/mc/lwjgl-util.jar https://repo1.maven.org/maven2/org/lwjgl/lwjgl/lwjgl_util/2.9.4-nightly-20150209/lwjgl_util-2.9.4-nightly-20150209.jar
+          ls -la /tmp/mc
 
-      - name: Dump signatures of the classes we hook
+      - name: Dump signatures
         run: |
-          for c in bib blk bja bjb bid bip biq bit bzf bze; do
-            echo "================ $c"
-            javap -p -classpath /tmp/client.jar "$c" 2>&1 | head -150
+          mkdir -p ci/dump
+          for c in $PROBE_CLASSES; do
+            echo "================ $c" > "ci/dump/$c.txt"
+            javap -p -classpath /tmp/mc/client.jar "$c" >> "ci/dump/$c.txt" 2>&1 || echo "MISSING $c" >> "ci/dump/$c.txt"
           done
+          javap -p -classpath /tmp/mc/lwjgl.jar org.lwjgl.input.Keyboard > ci/dump/lwjgl-keyboard.txt 2>&1
+          javap -p -classpath /tmp/mc/lwjgl.jar org.lwjgl.input.Mouse > ci/dump/lwjgl-mouse.txt 2>&1
+          wc -l ci/dump/*.txt
+
+      - name: Compile mod sources (if any)
+        run: |
+          mkdir -p build/classes
+          if [ -d src/mod/java ] && [ -n "$(find src/mod/java -name '*.java' -print -quit)" ]; then
+            javac -encoding UTF-8 -source 8 -target 8 -nowarn \
+              -cp "/tmp/mc/client.jar:/tmp/mc/lwjgl.jar:/tmp/mc/lwjgl-util.jar:Impact-4.9.1-1.12.2.jar" \
+              -d build/classes $(find src/mod/java -name '*.java')
+            echo "compiled:"; find build/classes -name '*.class' | sort
+          else
+            echo "no sources yet"
+          fi
+
+      - name: Package mod jar (if any)
+        run: |
+          if [ -d build/classes ] && [ -n "$(find build/classes -name '*.class' -print -quit)" ]; then
+            mkdir -p ci/out
+            (cd build/classes && jar cf ../../ci/out/relogic-module.jar .)
+            ls -la ci/out
+          fi
+
+      - name: Commit results back to branch
+        run: |
+          git config user.name "relogic-ci"
+          git config user.email "relogic-ci@users.noreply.github.com"
+          rm -rf ci/dump/.* 2>/dev/null || true
+          git add -f ci build/classes 2>/dev/null || git add -f ci
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+          else
+            git commit -m "ci: build output [ci-skip]"
+            git push
+          fi
