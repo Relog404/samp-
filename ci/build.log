@@ -10,13 +10,13 @@ lib: org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209 173887
 lib: org.lwjgl.lwjgl:lwjgl:2.9.2-nightly-20140822 1045632
 lib: org.lwjgl.lwjgl:lwjgl_util:2.9.2-nightly-20140822 173887
 total 12344
-drwxr-xr-x  2 runner runner     4096 Nov 23 16:53 .
-drwxrwxrwt 13 root   root       4096 Nov 23 16:53 ..
--rw-r--r--  1 runner runner 10180113 Nov 23 16:53 client.jar
--rw-r--r--  1 runner runner  1045632 Nov 23 16:53 lwjgl-2.9.2-nightly-20140822.jar
--rw-r--r--  1 runner runner  1047168 Nov 23 16:53 lwjgl-2.9.4-nightly-20150209.jar
--rw-r--r--  1 runner runner   173887 Nov 23 16:53 lwjgl_util-2.9.2-nightly-20140822.jar
--rw-r--r--  1 runner runner   173887 Nov 23 16:53 lwjgl_util-2.9.4-nightly-20150209.jar
+drwxr-xr-x  2 runner runner     4096 Nov 23 16:55 .
+drwxrwxrwt 14 root   root       4096 Nov 23 16:55 ..
+-rw-r--r--  1 runner runner 10180113 Nov 23 16:55 client.jar
+-rw-r--r--  1 runner runner  1045632 Nov 23 16:55 lwjgl-2.9.2-nightly-20140822.jar
+-rw-r--r--  1 runner runner  1047168 Nov 23 16:55 lwjgl-2.9.4-nightly-20150209.jar
+-rw-r--r--  1 runner runner   173887 Nov 23 16:55 lwjgl_util-2.9.2-nightly-20140822.jar
+-rw-r--r--  1 runner runner   173887 Nov 23 16:55 lwjgl_util-2.9.4-nightly-20150209.jar
 ### javap dumps
 ### mcp mappings
 zip entries: ['fields.csv', 'methods.csv', 'params.csv']
@@ -102,17 +102,17 @@ jar contents:
 Archive:  ci/out/relogic-module.jar
   Length      Date    Time    Name
 ---------  ---------- -----   ----
-        0  2026-11-23 16:53   META-INF/
-       58  2026-11-23 16:53   META-INF/MANIFEST.MF
-        0  2026-11-23 16:53   relogic/
-        0  2026-11-23 16:53   relogic/mixin/
-      896  2026-11-23 16:53   relogic/mixin/MixinGuiIngame.class
-      855  2026-11-23 16:53   relogic/mixin/MixinMinecraft.class
-     1210  2026-11-23 16:53   relogic/mixin/Bridge.class
-      904  2026-11-23 16:53   relogic/mixin/MixinGuiMainMenu.class
-     2617  2026-11-23 16:53   RelogicClient$Row.class
-    14299  2026-11-23 16:53   RelogicClient.class
-      216  2026-11-23 16:53   mixins.relogic.json
+        0  2026-11-23 16:55   META-INF/
+       58  2026-11-23 16:55   META-INF/MANIFEST.MF
+        0  2026-11-23 16:55   relogic/
+        0  2026-11-23 16:55   relogic/mixin/
+      896  2026-11-23 16:55   relogic/mixin/MixinGuiIngame.class
+      855  2026-11-23 16:55   relogic/mixin/MixinMinecraft.class
+     1210  2026-11-23 16:55   relogic/mixin/Bridge.class
+      904  2026-11-23 16:55   relogic/mixin/MixinGuiMainMenu.class
+     2617  2026-11-23 16:55   RelogicClient$Row.class
+    14299  2026-11-23 16:55   RelogicClient.class
+      216  2026-11-23 16:55   mixins.relogic.json
 ---------                     -------
     21055                     11 files
 ### assemble client jar
@@ -129,9 +129,10 @@ TweakClass: org.spongepowered.asm.launch.MixinTweaker
 
 build_client exit: 0
 ### sha256
-3f722cb9596c7853da5a9976b4b9966548690ab95ace09470f3a6a1bb7b126b3  ci/out/relogic-module.jar
+7a2b277322ddd7cba3aecc1bc2e92d81f8ca69adf18eda3cd88b13372f9b0d03  ci/out/relogic-module.jar
 5e5c70b435d9f4212a903bafddb650f5339c935f7b53dd4758be538a60b9887e  ci/out/RELOG-IC-4.9.1-1.12.2.jar
 ### verify client jar (with real client.jar targets)
+mixin api: org/spongepowered/asm/mixin/Mixin.class, org/spongepowered/asm/mixin/injection/At.class, org/spongepowered/asm/mixin/injection/Inject.class
 entries: 4248 | base: 4241 | configs: ['mixins.baritone.json', 'mixins.capi.json', 'mixins.impact.json', 'mixins.relogic.json']
 impact client mixins: 56 | log4j root: off
 mixins: ['MixinGuiMainMenu', 'MixinGuiIngame', 'MixinMinecraft']
@@ -153,11 +154,8 @@ target ok (notch): blr.a(IIF)V
 target ok (notch): biq.a(F)V
 target ok (notch): bib.t()V
 
-FAILED:
-  - MixinGuiMainMenu references unknown classes: ['relogic/mixin/MixinGuiMainMenu', 'relogic/mixin/Bridge']
-  - MixinGuiIngame references unknown classes: ['relogic/mixin/Bridge', 'relogic/mixin/MixinGuiIngame']
-  - MixinMinecraft references unknown classes: ['relogic/mixin/MixinMinecraft', 'relogic/mixin/Bridge']
-verify_client exit: 1
+OK: клиент собран корректно
+verify_client exit: 0
 ### unit tests
 reflection ok: net.minecraft.client.gui.FontRenderer.func_78276_b(Ljava/lang/String;III)I
 reflection ok: net.minecraft.client.gui.FontRenderer.func_78256_a(Ljava/lang/String;)I
