@@ -284,6 +284,9 @@ jobs:
             python3 tools/build_client.py --module ci/out/relogic-module.jar --out ci/out/RELOG-IC-4.9.1-1.12.2.jar
             echo "build_client exit: $?"
 
+            echo "### sha256"
+            sha256sum ci/out/relogic-module.jar ci/out/RELOG-IC-4.9.1-1.12.2.jar
+
             echo "### verify client jar (with real client.jar targets)"
             python3 tools/verify_client.py ci/out/RELOG-IC-4.9.1-1.12.2.jar --client /tmp/mc/client.jar
             echo "verify_client exit: $?"
