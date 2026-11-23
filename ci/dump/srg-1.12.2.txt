@@ -4,6 +4,7 @@ srg chars: 3678728
 CL: bhy net/minecraft/client/settings/KeyBinding
 CL: bib net/minecraft/client/Minecraft
 CL: bid net/minecraft/client/settings/GameSettings
+CL: bid$a net/minecraft/client/settings/GameSettings$Options
 CL: bip net/minecraft/client/gui/FontRenderer
 CL: biq net/minecraft/client/gui/GuiIngame
 CL: bir net/minecraft/client/gui/Gui
@@ -124,6 +125,53 @@ FD: bib/aw net/minecraft/client/Minecraft/field_147129_ai
 FD: bib/ax net/minecraft/client/Minecraft/field_71459_aj
 FD: bib/ay net/minecraft/client/Minecraft/field_71453_ak
 FD: bib/az net/minecraft/client/Minecraft/field_71455_al
+FD: bid$a/A net/minecraft/client/settings/GameSettings$Options/CHAT_WIDTH
+FD: bid$a/B net/minecraft/client/settings/GameSettings$Options/CHAT_HEIGHT_FOCUSED
+FD: bid$a/C net/minecraft/client/settings/GameSettings$Options/CHAT_HEIGHT_UNFOCUSED
+FD: bid$a/D net/minecraft/client/settings/GameSettings$Options/MIPMAP_LEVELS
+FD: bid$a/E net/minecraft/client/settings/GameSettings$Options/FORCE_UNICODE_FONT
+FD: bid$a/F net/minecraft/client/settings/GameSettings$Options/REDUCED_DEBUG_INFO
+FD: bid$a/G net/minecraft/client/settings/GameSettings$Options/ENTITY_SHADOWS
+FD: bid$a/H net/minecraft/client/settings/GameSettings$Options/MAIN_HAND
+FD: bid$a/I net/minecraft/client/settings/GameSettings$Options/ATTACK_INDICATOR
+FD: bid$a/J net/minecraft/client/settings/GameSettings$Options/ENABLE_WEAK_ATTACKS
+FD: bid$a/K net/minecraft/client/settings/GameSettings$Options/SHOW_SUBTITLES
+FD: bid$a/L net/minecraft/client/settings/GameSettings$Options/REALMS_NOTIFICATIONS
+FD: bid$a/M net/minecraft/client/settings/GameSettings$Options/AUTO_JUMP
+FD: bid$a/N net/minecraft/client/settings/GameSettings$Options/NARRATOR
+FD: bid$a/O net/minecraft/client/settings/GameSettings$Options/field_74385_A
+FD: bid$a/P net/minecraft/client/settings/GameSettings$Options/field_74386_B
+FD: bid$a/Q net/minecraft/client/settings/GameSettings$Options/field_74387_C
+FD: bid$a/R net/minecraft/client/settings/GameSettings$Options/field_148270_M
+FD: bid$a/S net/minecraft/client/settings/GameSettings$Options/field_148271_N
+FD: bid$a/T net/minecraft/client/settings/GameSettings$Options/field_148272_O
+FD: bid$a/U net/minecraft/client/settings/GameSettings$Options/$VALUES
+FD: bid$a/a net/minecraft/client/settings/GameSettings$Options/INVERT_MOUSE
+FD: bid$a/b net/minecraft/client/settings/GameSettings$Options/SENSITIVITY
+FD: bid$a/c net/minecraft/client/settings/GameSettings$Options/FOV
+FD: bid$a/d net/minecraft/client/settings/GameSettings$Options/GAMMA
+FD: bid$a/e net/minecraft/client/settings/GameSettings$Options/SATURATION
+FD: bid$a/f net/minecraft/client/settings/GameSettings$Options/RENDER_DISTANCE
+FD: bid$a/g net/minecraft/client/settings/GameSettings$Options/VIEW_BOBBING
+FD: bid$a/h net/minecraft/client/settings/GameSettings$Options/ANAGLYPH
+FD: bid$a/i net/minecraft/client/settings/GameSettings$Options/FRAMERATE_LIMIT
+FD: bid$a/j net/minecraft/client/settings/GameSettings$Options/FBO_ENABLE
+FD: bid$a/k net/minecraft/client/settings/GameSettings$Options/RENDER_CLOUDS
+FD: bid$a/l net/minecraft/client/settings/GameSettings$Options/GRAPHICS
+FD: bid$a/m net/minecraft/client/settings/GameSettings$Options/AMBIENT_OCCLUSION
+FD: bid$a/n net/minecraft/client/settings/GameSettings$Options/GUI_SCALE
+FD: bid$a/o net/minecraft/client/settings/GameSettings$Options/PARTICLES
+FD: bid$a/p net/minecraft/client/settings/GameSettings$Options/CHAT_VISIBILITY
+FD: bid$a/q net/minecraft/client/settings/GameSettings$Options/CHAT_COLOR
+FD: bid$a/r net/minecraft/client/settings/GameSettings$Options/CHAT_LINKS
+FD: bid$a/s net/minecraft/client/settings/GameSettings$Options/CHAT_OPACITY
+FD: bid$a/t net/minecraft/client/settings/GameSettings$Options/CHAT_LINKS_PROMPT
+FD: bid$a/u net/minecraft/client/settings/GameSettings$Options/SNOOPER_ENABLED
+FD: bid$a/v net/minecraft/client/settings/GameSettings$Options/USE_FULLSCREEN
+FD: bid$a/w net/minecraft/client/settings/GameSettings$Options/ENABLE_VSYNC
+FD: bid$a/x net/minecraft/client/settings/GameSettings$Options/USE_VBO
+FD: bid$a/y net/minecraft/client/settings/GameSettings$Options/TOUCHSCREEN
+FD: bid$a/z net/minecraft/client/settings/GameSettings$Options/CHAT_SCALE
 FD: bid/A net/minecraft/client/settings/GameSettings/field_82881_y
 FD: bid/B net/minecraft/client/settings/GameSettings/field_85185_A
 FD: bid/C net/minecraft/client/settings/GameSettings/field_186715_A
@@ -489,6 +537,22 @@ MD: bib/aw ()Z net/minecraft/client/Minecraft/func_147122_X ()Z
 MD: bib/ax ()V net/minecraft/client/Minecraft/func_71389_H ()V
 MD: bib/ay ()V net/minecraft/client/Minecraft/func_110441_Q ()V
 MD: bib/az ()V net/minecraft/client/Minecraft/func_71411_J ()V
+MD: bid$a/a ()Z net/minecraft/client/settings/GameSettings$Options/func_74380_a ()Z
+MD: bid$a/a (F)V net/minecraft/client/settings/GameSettings$Options/func_148263_a (F)V
+MD: bid$a/a (I)Lbid$a; net/minecraft/client/settings/GameSettings$Options/func_74379_a (I)Lnet/minecraft/client/settings/GameSettings$Options;
+MD: bid$a/a (Lbid$a;)F net/minecraft/client/settings/GameSettings$Options/access$000 (Lnet/minecraft/client/settings/GameSettings$Options;)F
+MD: bid$a/b ()Z net/minecraft/client/settings/GameSettings$Options/func_74382_b ()Z
+MD: bid$a/b (Lbid$a;)F net/minecraft/client/settings/GameSettings$Options/access$100 (Lnet/minecraft/client/settings/GameSettings$Options;)F
+MD: bid$a/c ()I net/minecraft/client/settings/GameSettings$Options/func_74381_c ()I
+MD: bid$a/c (F)F net/minecraft/client/settings/GameSettings$Options/func_148266_c (F)F
+MD: bid$a/d ()Ljava/lang/String; net/minecraft/client/settings/GameSettings$Options/func_74378_d ()Ljava/lang/String;
+MD: bid$a/d (F)F net/minecraft/client/settings/GameSettings$Options/func_148262_d (F)F
+MD: bid$a/e ()F net/minecraft/client/settings/GameSettings$Options/func_186707_e ()F
+MD: bid$a/e (F)F net/minecraft/client/settings/GameSettings$Options/func_148268_e (F)F
+MD: bid$a/f ()F net/minecraft/client/settings/GameSettings$Options/func_148267_f ()F
+MD: bid$a/f (F)F net/minecraft/client/settings/GameSettings$Options/func_148264_f (F)F
+MD: bid$a/values ()[Lbid$a; net/minecraft/client/settings/GameSettings$Options/values ()[Lnet/minecraft/client/settings/GameSettings$Options;
+MD: bid$a/valueOf (Ljava/lang/String;)Lbid$a; net/minecraft/client/settings/GameSettings$Options/valueOf (Ljava/lang/String;)Lnet/minecraft/client/settings/GameSettings$Options;
 MD: bid/a ()V net/minecraft/client/settings/GameSettings/func_74300_a ()V
 MD: bid/a (I)Ljava/lang/String; net/minecraft/client/settings/GameSettings/func_74298_c (I)Ljava/lang/String;
 MD: bid/a (Laee;)V net/minecraft/client/settings/GameSettings/func_178877_a (Lnet/minecraft/entity/player/EnumPlayerModelParts;)V
