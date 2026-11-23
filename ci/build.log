@@ -10,13 +10,13 @@ lib: org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209 173887
 lib: org.lwjgl.lwjgl:lwjgl:2.9.2-nightly-20140822 1045632
 lib: org.lwjgl.lwjgl:lwjgl_util:2.9.2-nightly-20140822 173887
 total 12344
-drwxr-xr-x  2 runner runner     4096 Nov 23 15:53 .
-drwxrwxrwt 13 root   root       4096 Nov 23 15:53 ..
--rw-r--r--  1 runner runner 10180113 Nov 23 15:53 client.jar
--rw-r--r--  1 runner runner  1045632 Nov 23 15:53 lwjgl-2.9.2-nightly-20140822.jar
--rw-r--r--  1 runner runner  1047168 Nov 23 15:53 lwjgl-2.9.4-nightly-20150209.jar
--rw-r--r--  1 runner runner   173887 Nov 23 15:53 lwjgl_util-2.9.2-nightly-20140822.jar
--rw-r--r--  1 runner runner   173887 Nov 23 15:53 lwjgl_util-2.9.4-nightly-20150209.jar
+drwxr-xr-x  2 runner runner     4096 Nov 23 15:55 .
+drwxrwxrwt 13 root   root       4096 Nov 23 15:55 ..
+-rw-r--r--  1 runner runner 10180113 Nov 23 15:55 client.jar
+-rw-r--r--  1 runner runner  1045632 Nov 23 15:55 lwjgl-2.9.2-nightly-20140822.jar
+-rw-r--r--  1 runner runner  1047168 Nov 23 15:55 lwjgl-2.9.4-nightly-20150209.jar
+-rw-r--r--  1 runner runner   173887 Nov 23 15:55 lwjgl_util-2.9.2-nightly-20140822.jar
+-rw-r--r--  1 runner runner   173887 Nov 23 15:55 lwjgl_util-2.9.4-nightly-20150209.jar
 ### javap dumps
 ### mcp mappings
 zip entries: ['fields.csv', 'methods.csv', 'params.csv']
@@ -26,10 +26,34 @@ target searge: {'mipmapLevels': ['field_147636_j', 'field_151442_I'], 'renderDis
 ### url probe
 ### decompiled settings/options
   4475 ci/dump/bid-code.txt
-     1 ci/dump/bid-options-code.txt
+   844 ci/dump/bid-options-code.txt
   2044 ci/dump/blr-code.txt
-  6520 total
-### mcp_config tsrg
-1
+  7363 total
+### srg mapping (notch <-> srg <-> mcp)
+mcp names: 19659
+entries: ['joined.srg', 'astyle.cfg', 'exceptor.json', 'joined.exc', 'static_methods.txt', 'patches/Start.java', 'patches/inject/package-info-template.java', 'patches/inject/common/mcp/MethodsReturnNonnullByDefault.java', 'patches/minecraft_ff/net.minecraft.advancements.AdvancementList.java.patch', 'patches/minecraft_ff/net.minecraft.advancements.PlayerAdvancements.java.patch']
+srg bytes: 3677471
+FD: bib/A  <=  pauseOnLostFocus  (field_82881_y)
+FD: bib/G  <=  chatScale  (field_96691_E)
+FD: bib/K  <=  mipmapLevels  (field_151442_I)
+FD: bib/M  <=  entityShadows  (field_181151_V)
+FD: bib/c  <=  mouseSensitivity  (field_74341_c)
+FD: bib/d  <=  invertMouse  (field_74338_d)
+FD: bib/e  <=  renderDistanceChunks  (field_151451_c)
+FD: bib/f  <=  viewBobbing  (field_74336_f)
+FD: bib/g  <=  anaglyph  (field_74337_g)
+FD: bib/i  <=  limitFramerate  (field_74350_i)
+FD: bib/j  <=  clouds  (field_74345_l)
+FD: bib/k  <=  fancyGraphics  (field_74347_j)
+FD: bib/l  <=  ambientOcclusion  (field_74348_k)
+FD: bib/o  <=  chatVisibility  (field_74343_n)
+FD: bib/q  <=  chatLinks  (field_74359_p)
+FD: bib/r  <=  chatLinksPrompt  (field_74358_q)
+FD: bib/s  <=  chatOpacity  (field_74357_r)
+FD: bib/aB  <=  smoothCamera  (field_74326_T)
+FD: bib/aD  <=  fovSetting  (field_74334_X)
+FD: bib/aE  <=  gammaSetting  (field_74333_Y)
+FD: bib/aG  <=  guiScale  (field_74335_Z)
+24
 ### compile
 no sources yet
