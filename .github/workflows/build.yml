@@ -1,0 +1,328 @@
+name: build
+
+on:
+  push:
+    branches: ["arena/07b9612e-samp"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PROBE_CLASSES: "bib blk bja blr bir blg bjb bid bip biq bit bhy biy biz"
+
+jobs:
+  build:
+    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup JDK 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "8"
+
+      - name: Prepare (download MC, LWJGL, dump signatures, compile)
+        run: |
+          set +e
+          mkdir -p ci/dump ci/out build/classes
+          exec > >(tee ci/build.log) 2>&1
+
+          echo "### toolchain"
+          java -version
+          javac -version
+
+          echo "### download"
+          mkdir -p /tmp/mc
+          python3 - <<'PY'
+          import json, urllib.request
+          try:
+              man = json.load(urllib.request.urlopen("https://launchermeta.mojang.com/mc/game/version_manifest.json"))
+              entry = [v for v in man["versions"] if v["id"] == "1.12.2"][0]
+              meta = json.load(urllib.request.urlopen(entry["url"]))
+              data = urllib.request.urlopen(meta["downloads"]["client"]["url"]).read()
+              open("/tmp/mc/client.jar", "wb").write(data)
+              print("client.jar bytes:", len(data))
+          except Exception as exc:
+              print("download failed:", exc)
+          PY
+          python3 - <<'PY'
+          import json, os, urllib.request
+          man = json.load(urllib.request.urlopen("https://launchermeta.mojang.com/mc/game/version_manifest.json"))
+          entry = [v for v in man["versions"] if v["id"] == "1.12.2"][0]
+          meta = json.load(urllib.request.urlopen(entry["url"]))
+          for lib in meta["libraries"]:
+              name = lib.get("name", "")
+              if name.startswith(("org.lwjgl.lwjgl:lwjgl:", "org.lwjgl.lwjgl:lwjgl_util:")):
+                  art = lib["downloads"]["artifact"]
+                  data = urllib.request.urlopen(art["url"]).read()
+                  out = "/tmp/mc/" + os.path.basename(art["path"])
+                  open(out, "wb").write(data)
+                  print("lib:", name, len(data))
+          PY
+          ls -la /tmp/mc
+
+          echo "### javap dumps"
+          for c in $PROBE_CLASSES; do
+            echo "================ $c" > "ci/dump/$c.txt"
+            javap -p -classpath /tmp/mc/client.jar "$c" >> "ci/dump/$c.txt" 2>&1
+            echo "(exit $?)" >> "ci/dump/$c.txt"
+          done
+          for j in /tmp/mc/lwjgl*.jar; do
+            javap -p -classpath "$j" org.lwjgl.input.Keyboard > "ci/dump/lwjgl-keyboard.txt" 2>&1 && break
+          done
+          for j in /tmp/mc/lwjgl*.jar; do
+            javap -p -classpath "$j" org.lwjgl.input.Mouse > "ci/dump/lwjgl-mouse.txt" 2>&1 && break
+          done
+
+          echo "### mcp mappings"
+          curl -sSL --retry 2 -o /tmp/mcp.zip https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_stable/39-1.12/mcp_stable-39-1.12.zip || echo "mcp download failed"
+          python3 - <<'PY' > ci/dump/mcp-map.txt 2>&1
+          import csv, io, os, zipfile
+          try:
+              z = zipfile.ZipFile("/tmp/mcp.zip")
+          except Exception as exc:
+              print("cannot open mcp zip:", exc)
+              raise SystemExit
+          print("zip entries:", z.namelist()[:40])
+          srgs = {}
+          for entry in z.namelist():
+              if entry.endswith(".srg"):
+                  text = z.read(entry).decode("utf-8", "replace")
+                  srgs[entry] = text
+                  print("srg file:", entry, len(text))
+          print("----")
+          # fields.csv: searge,name,side,desc
+          names = {}
+          for f in ("fields.csv", "methods.csv"):
+              if f in z.namelist():
+                  reader = csv.DictReader(io.StringIO(z.read(f).decode("utf-8")))
+                  for row in reader:
+                      names[row["searge"]] = row["name"]
+          print("mcp names:", len(names))
+          targets = ["renderDistanceChunks", "particles", "mipmapLevels", "limitFramerate",
+                     "fovSetting", "gammaSetting", "smoothCamera", "fancyGraphics",
+                     "ambientOcclusion", "clouds", "chatOpacity", "chatScale", "guiScale",
+                     "anaglyph", "pauseOnLostFocus", "saveOptions", "getKeyBinding",
+                     "drawScreen", "initGui", "drawRect", "drawString", "drawCenteredString",
+                     "getScaledWidth", "getScaledHeight", "renderGameOverlay",
+                     "getMinecraft", "drawStringWithShadow", "mousePressed"]
+          searge_for = {}
+          for searge, name in names.items():
+              if name in targets:
+                  searge_for.setdefault(name, []).append(searge)
+          print("target searge:", searge_for)
+          # notch <-> srg: lines like "FD: bid/x net/minecraft/.../field_151451_c"
+          pairs = {}
+          for entry, text in srgs.items():
+              for line in text.splitlines():
+                  if line.startswith(("FD:", "MD:")):
+                      parts = line.split()
+                      if len(parts) >= 3:
+                          pairs.setdefault(entry, []).append(parts[1:])
+          for entry, rows in pairs.items():
+              print("==", entry, len(rows))
+              srg_set = set(searge_for.get(t, []) for t in targets)
+              flat = {s for grp in srg_set for s in grp}
+              for a, b in rows:
+                  if a.rsplit("/", 1)[-1] in flat or b.rsplit("/", 1)[-1] in flat:
+                      print("   ", a, "<->", b)
+          PY
+          head -5 ci/dump/mcp-map.txt
+
+          echo "### url probe"
+          for u in \
+            "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/1.12/mcp_config-1.12.zip" \
+            "https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_config/1.12/mcp_config-1.12.zip" \
+            "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/1.12/mcp-1.12-srg.zip" \
+            "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_snapshot/20171003-1.12/mcp_snapshot-20171003-1.12.zip"; do
+            code=$(curl -sSL -o /tmp/probe.bin -w "%{http_code}" --max-time 60 "$u" || echo ERR)
+            echo "$code $(stat -c%s /tmp/probe.bin 2>/dev/null) $u"
+          done > ci/dump/urls.txt 2>&1
+
+          echo "### decompiled settings/options"
+          javap -c -p -classpath /tmp/mc/client.jar bid > ci/dump/bid-code.txt 2>&1
+          javap -c -p -classpath /tmp/mc/client.jar 'bid$a' > ci/dump/bid-options-code.txt 2>&1
+          javap -p -classpath /tmp/mc/client.jar 'bid$a' > ci/dump/bid-options.txt 2>&1
+          javap -c -p -classpath /tmp/mc/client.jar blr > ci/dump/blr-code.txt 2>&1
+          wc -l ci/dump/bid-code.txt ci/dump/bid-options-code.txt ci/dump/blr-code.txt
+
+          echo "### srg mapping (notch <-> srg <-> mcp)"
+          curl -sSL --retry 2 -o /tmp/mcp-srg.zip https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/1.12/mcp-1.12-srg.zip || echo "srg download failed"
+          python3 - <<'PY' > ci/dump/srg-map.txt 2>&1
+          import csv, io, zipfile
+
+          stable = zipfile.ZipFile("/tmp/mcp.zip")
+          names = {}
+          for f in ("fields.csv", "methods.csv"):
+              for row in csv.DictReader(io.StringIO(stable.read(f).decode("utf-8"))):
+                  names[row["searge"]] = row["name"]
+          print("mcp names:", len(names))
+
+          z = zipfile.ZipFile("/tmp/mcp-srg.zip")
+          print("entries:", z.namelist()[:10])
+          text = ""
+          for entry in z.namelist():
+              if entry.endswith(".srg"):
+                  text += z.read(entry).decode("utf-8", "replace") + "\n"
+          print("srg bytes:", len(text))
+
+          targets = {
+              "renderDistanceChunks", "particles", "mipmapLevels", "limitFramerate",
+              "fovSetting", "gammaSetting", "smoothCamera", "fancyGraphics",
+              "ambientOcclusion", "clouds", "chatOpacity", "chatScale", "guiScale",
+              "anaglyph", "pauseOnLostFocus", "entityShadows", "saveOptions",
+              "getOptionFloatValue", "getOptionOrdinalValue", "setOptionValue",
+              "setOptionValueWithKey", "getKeyBinding", "drawScreen", "drawString",
+              "drawRect", "drawCenteredString", "renderGameOverlay", "debugFPS",
+              "getScaledWidth", "getScaledHeight", "getMinecraft", "isKeyDown",
+              "fontRenderer", "gameSettings", "buttonList", "displayString",
+              "getStringWidth", "mousePressed", "drawStringWithShadow",
+              "actionPerformed", "keyTyped", "mouseClicked", "initGui",
+              "setWorldAndResolution", "currentScreen", "particles",
+              "renderDistance", "guiScale", "chatVisibility", "mouseSensitivity",
+              "invertMouse", "viewBobbing", "chatLinks", "chatLinksPrompt",
+          }
+          interesting_owners = {"bid", "bib", "blr", "blk", "bir", "bja", "biq", "bit", "bip", "bhy"}
+
+          for line in text.splitlines():
+              if line.startswith(("FD:", "MD:")):
+                  parts = line.split()
+                  if len(parts) < 3:
+                      continue
+                  notch, srg = parts[1], parts[2]
+                  srg_member = srg.rsplit("/", 1)[-1]
+                  mcp = names.get(srg_member)
+                  if not mcp or mcp not in targets:
+                      continue
+                  owner_notch = notch.rsplit("/", 1)[0]
+                  if owner_notch not in interesting_owners:
+                      continue
+                  print(f"{parts[0]} {owner_notch}/{notch.rsplit('/', 1)[-1]}  <=  {mcp}  ({srg_member})")
+          PY
+          head -40 ci/dump/srg-map.txt
+          grep -c . ci/dump/srg-map.txt
+
+          echo "### srg 1.12.2 (notch -> srg)"
+          for u in \
+            "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/1.12.2/mcp-1.12.2-srg.zip" \
+            "https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp/1.12.2/mcp-1.12.2-srg.zip"; do
+            code=$(curl -sSL -o /tmp/srg.zip -w "%{http_code}" --max-time 90 "$u" || echo ERR)
+            echo "$code $(stat -c%s /tmp/srg.zip 2>/dev/null) $u"
+            [ "$code" = "200" ] && break
+          done
+          python3 - <<'PY' > ci/dump/srg-1.12.2.txt 2>&1
+          import os, zipfile
+          try:
+              z = zipfile.ZipFile("/tmp/srg.zip")
+          except Exception as exc:
+              print("cannot open srg:", exc)
+              raise SystemExit
+          print("entries:", z.namelist()[:8])
+          text = ""
+          for entry in z.namelist():
+              if entry.endswith(".srg"):
+                  text += z.read(entry).decode("utf-8", "replace")
+          print("srg chars:", len(text))
+          wanted_classes = {"bib", "blr", "biq", "blk", "bir", "bip", "bit", "bja", "bid", "bhy", "bjb", "bid$a"}
+          print("--- CL ---")
+          for line in text.splitlines():
+              if line.startswith("CL:"):
+                  parts = line.split()
+                  if parts[1] in wanted_classes:
+                      print(line)
+          print("--- FD/MD ---")
+          for line in text.splitlines():
+              if line.startswith(("FD:", "MD:")):
+                  parts = line.split()
+                  owner = parts[1].rsplit("/", 1)[0]
+                  if owner.endswith("$Options"):
+                      owner = owner.split("$")[0] + "$a"
+                  if owner in wanted_classes:
+                      print(line)
+          PY
+          grep -c . ci/dump/srg-1.12.2.txt
+
+          echo "### csv name checks"
+          python3 - <<'PY' > ci/dump/csv-check.txt 2>&1
+          import csv, io, zipfile
+          z = zipfile.ZipFile("/tmp/mcp.zip")
+          names = {}
+          for f in ("fields.csv", "methods.csv"):
+              for row in csv.DictReader(io.StringIO(z.read(f).decode("utf-8"))):
+                  names[row["searge"]] = (f, row["name"])
+          ids = [
+              "field_146120_f", "field_146121_g", "field_146128_h", "field_146129_i",
+              "field_146126_j", "field_146127_k", "field_146124_l", "field_146125_m",
+              "field_71466_p", "field_71474_y", "field_71462_r", "field_71443_c", "field_71440_d",
+              "field_146292_n", "field_146294_l", "field_146295_m", "field_146297_k",
+              "func_78276_b", "func_78256_a", "func_73734_a", "func_71410_x", "func_71407_l",
+              "func_73863_a", "func_175180_a", "func_78326_a", "func_78328_b",
+              "func_74296_a", "func_74306_a", "func_74304_a", "func_74303_b",
+          ]
+          for i in ids:
+              print("%-18s %s" % (i, names.get(i, "??")))
+          PY
+          cat ci/dump/csv-check.txt
+
+          echo "### compile"
+          if [ -d src/mod/java ] && [ -n "$(find src/mod/java -name '*.java' -print -quit)" ]; then
+            javac -encoding UTF-8 -source 8 -target 8 -nowarn -proc:none \
+              -cp "/tmp/mc/client.jar:/tmp/mc/*:Impact-4.9.1-1.12.2.jar" \
+              -d build/classes $(find src/mod/java -name '*.java')
+            echo "javac exit: $?"
+            if [ -d src/mod/resources ]; then cp -r src/mod/resources/. build/classes/; fi
+            find build/classes -type f | sort
+            (cd build/classes && jar cf ../../ci/out/relogic-module.jar . )
+            echo "jar contents:" && unzip -l ci/out/relogic-module.jar | tail -20
+
+            echo "### assemble client jar"
+            python3 tools/build_client.py --module ci/out/relogic-module.jar --out ci/out/RELOG-IC-4.9.1-1.12.2.jar
+            echo "build_client exit: $?"
+
+            echo "### sha256"
+            sha256sum ci/out/relogic-module.jar ci/out/RELOG-IC-4.9.1-1.12.2.jar
+
+            echo "### verify client jar (with real client.jar targets)"
+            python3 tools/verify_client.py ci/out/RELOG-IC-4.9.1-1.12.2.jar --client /tmp/mc/client.jar
+            echo "verify_client exit: $?"
+
+            echo "### unit tests"
+            python3 -m unittest discover -s tests -v 2>&1 | tail -12
+            echo "jar exit: $?"
+          else
+            echo "no sources yet"
+          fi
+
+      - name: Upload jars
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relogic-jars
+          path: |
+            ci/out/relogic-module.jar
+            ci/out/RELOG-IC-4.9.1-1.12.2.jar
+          if-no-files-found: warn
+
+      - name: Commit results
+        if: always()
+        run: |
+          set +e
+          git config user.name "relogic-ci"
+          git config user.email "relogic-ci@users.noreply.github.com"
+          git add -f ci/build.log ci/dump ci/out/relogic-module.jar
+          git status --short | head -40
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+          else
+            git commit -m "ci: build output [ci-skip]"
+            git push
+          fi
+
+      - name: Show captured log
+        if: always()
+        run: cat ci/build.log || true

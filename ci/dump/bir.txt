@@ -1,0 +1,22 @@
+================ bir
+Compiled from "SourceFile"
+public class bir {
+  public static final nf b;
+  public static final nf c;
+  public static final nf d;
+  protected float e;
+  public bir();
+  protected void a(int, int, int, int);
+  protected void b(int, int, int, int);
+  public static void a(int, int, int, int, int);
+  protected void a(int, int, int, int, int, int);
+  public void a(bip, java.lang.String, int, int, int);
+  public void c(bip, java.lang.String, int, int, int);
+  public void b(int, int, int, int, int, int);
+  public void a(float, float, int, int, int, int);
+  public void a(int, int, cdq, int, int);
+  public static void a(int, int, float, float, int, int, float, float);
+  public static void a(int, int, float, float, int, int, int, int, float, float);
+  static {};
+}
+(exit 0)

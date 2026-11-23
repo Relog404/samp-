@@ -1,0 +1,12 @@
+================ blg
+Compiled from "SourceFile"
+public class blg extends blk {
+  private int a;
+  private int f;
+  public blg();
+  public void b();
+  protected void a(bja);
+  public void e();
+  public void a(int, int, float);
+}
+(exit 0)

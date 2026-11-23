@@ -1,0 +1,7 @@
+================ bjc
+Compiled from "SourceFile"
+public class bjc {
+  public static java.lang.String a(java.lang.String, boolean);
+  public static java.util.List<hh> a(hh, int, bip, boolean, boolean);
+}
+(exit 0)

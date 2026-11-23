@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RELOG-IC — клиент оптимизации Minecraft</title>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<div class="bg">
+  <div class="bg-glow bg-glow-a"></div>
+  <div class="bg-glow bg-glow-b"></div>
+  <div class="grid"></div>
+  <div class="blocks" aria-hidden="true">
+    <i style="--x:6%;--y:18%;--s:26px;--d:0s"></i>
+    <i style="--x:82%;--y:12%;--s:18px;--d:1.4s"></i>
+    <i style="--x:72%;--y:74%;--s:32px;--d:2.6s"></i>
+    <i style="--x:14%;--y:78%;--s:20px;--d:.7s"></i>
+   <i style="--x:46%;--y:8%;--s:14px;--d:3.4s"></i>
+    <i style="--x:92%;--y:52%;--s:22px;--d:2s"></i>
+  </div>
+</div>
+
+<main class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">RELOG-IC</span>
+      <span class="brand-tag">client</span>
+    </div>
+    <div class="topbar-right">
+      <span class="pill" id="pill-dir" title="Папка Minecraft">.minecraft</span>
+      <button class="icon-btn" id="btn-refresh" title="Обновить">⟳</button>
+    </div>
+  </header>
+
+  <!-- ===================== ГЛАВНОЕ МЕНЮ ===================== -->
+  <section class="screen active" id="screen-main">
+    <div class="logo-wrap">
+      <h1 class="logo">RELOG-IC</h1>
+      <div class="logo-sub">Minecraft 1.12.2 · optimization client</div>
+      <div class="splash" id="splash">Оптимизация!</div>
+    </div>
+
+    <div class="menu">
+      <div class="menu-col">
+        <div class="menu-item">
+          <button class="mc-btn primary" data-screen="optimization">
+            <span>Оптимизация</span>
+            <em>графика · FPS · камера</em>
+          </button>
+          <div class="tooltip" role="tooltip">
+            <div class="tooltip-title">Внутри</div>
+            <ul>
+              <li>Сглаживание и Mipmap</li>
+              <li>Дальность прорисовки</li>
+              <li>Детализация и частицы</li>
+              <li>Лимит FPS и V-Sync</li>
+              <li>Эффект бодикама</li>
+              <li>Фотореализм</li>
+              <li>Рыбий глаз</li>
+              <li>Память и аргументы JVM</li>
+            </ul>
+          </div>
+        </div>
+
+        <button class="mc-btn" data-screen="presets">
+          <span>Профили</span>
+          <em>готовые сборки настроек</em>
+        </button>
+
+        <button class="mc-btn" data-screen="jvm">
+          <span>Память и JVM</span>
+          <em>Aikar · G1 · Xmx</em>
+        </button>
+
+        <button class="mc-btn" data-screen="client">
+          <span>Клиент</span>
+          <em>jar, рескин, проверка</em>
+        </button>
+
+        <button class="mc-btn ghost" data-screen="about">
+          <span>О клиенте</span>
+          <em>версия, папки, бэкапы</em>
+        </button>
+      </div>
+
+      <aside class="menu-side">
+        <div class="panel">
+          <div class="panel-title">Состояние</div>
+          <div class="stat"><span>options.txt</span><b id="stat-options">—</b></div>
+          <div class="stat"><span>Профили лаунчера</span><b id="stat-profiles">—</b></div>
+          <div class="stat"><span>Jar клиента</span><b id="stat-jars">—</b></div>
+          <div class="stat"><span>Папка</span><b id="stat-dir" class="ellipsis">—</b></div>
+        </div>
+        <div class="hint">
+          Наведи на <b>«Оптимизация»</b> — там список всего, что можно крутить.
+          Все изменения пишутся с бэкапом в <code>.relogic_backups</code>.
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== ОПТИМИЗАЦИЯ ===================== -->
+  <section class="screen" id="screen-optimization">
+    <div class="screen-head">
+      <h2>Оптимизация</h2>
+      <div class="head-actions">
+        <button class="mc-btn small" id="btn-reload">Перечитать</button>
+        <button class="mc-btn small primary" id="btn-apply">Применить</button>
+      </div>
+    </div>
+
+    <div class="split">
+      <nav class="tabs" id="opt-tabs">
+        <button class="tab active" data-group="graphics">Графика</button>
+        <button class="tab" data-group="camera">Камера</button>
+        <button class="tab" data-group="perf">Производительность</button>
+        <button class="tab" data-group="misc">Прочее</button>
+      </nav>
+
+      <div class="controls" id="controls"></div>
+    </div>
+
+    <div class="statusbar">
+      <span id="opt-status">Загружаю настройки…</span>
+      <span class="muted" id="opt-changes">изменений: 0</span>
+    </div>
+  </section>
+
+  <!-- ===================== ПРЕСЕТЫ ===================== -->
+  <section class="screen" id="screen-presets">
+    <div class="screen-head">
+      <h2>Профили</h2>
+      <div class="head-actions">
+        <button class="mc-btn small" data-screen="optimization">Тонкая настройка</button>
+      </div>
+    </div>
+    <div class="preset-grid" id="preset-grid"></div>
+    <div class="statusbar"><span id="preset-status">Выбери пресет — он применится сразу.</span></div>
+  </section>
+
+  <!-- ===================== КЛИЕНТ (JAR) ===================== -->
+  <section class="screen" id="screen-client">
+    <div class="screen-head">
+      <h2>Клиент</h2>
+      <div class="head-actions">
+        <button class="mc-btn small" id="btn-jars">Обновить список</button>
+      </div>
+    </div>
+    <div class="panel pad">
+      <div class="panel-title">Пересборка jar</div>
+      <p class="muted small">
+        Убирает фирменные экраны и HUD, чистит ресурсы, иконки и логи,
+        пишет нейтральный jar. Исходный файл не меняется.
+      </p>
+      <div class="row">
+        <label class="field grow">
+          <span>Исходный jar</span>
+          <input id="jar-source" list="jar-list" placeholder="Impact-4.9.1-1.12.2.jar" />
+          <datalist id="jar-list"></datalist>
+        </label>
+      </div>
+      <div class="row">
+        <label class="field grow">
+          <span>Имя результата</span>
+          <input id="jar-name" value="1.12.2-relogic.jar" />
+        </label>
+        <label class="check">
+          <input type="checkbox" id="jar-full" />
+          <span>Отключить все кастомные экраны (ClickGUI и т.п.)</span>
+        </label>
+      </div>
+      <div class="row">
+        <button class="mc-btn primary small" id="btn-jar-patch">Пересобрать</button>
+        <button class="mc-btn small" id="btn-jar-verify">Проверить</button>
+      </div>
+      <pre class="log" id="jar-log">—</pre>
+    </div>
+
+    <div class="panel pad">
+      <div class="panel-title">Папка Minecraft</div>
+      <div class="row">
+        <label class="field grow">
+          <span>Путь к .minecraft</span>
+          <input id="dir-input" placeholder="C:\\Users\\you\\AppData\\Roaming\\.minecraft" />
+        </label>
+        <button class="mc-btn small" id="btn-dir">Сохранить</button>
+      </div>
+      <div class="muted small">
+        Демо-папка с примером настроек: <button class="link" id="btn-demo">использовать</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== JVM ===================== -->
+  <section class="screen" id="screen-jvm">
+    <div class="screen-head">
+      <h2>Память и JVM</h2>
+      <div class="head-actions">
+        <button class="mc-btn small primary" id="btn-jvm">Записать в профиль</button>
+      </div>
+    </div>
+    <div class="panel pad">
+      <div class="row">
+        <label class="field grow">
+          <span>Профиль лаунчера</span>
+          <select id="jvm-profile"></select>
+        </label>
+        <label class="field">
+          <span>Сборщик мусора</span>
+          <select id="jvm-gc">
+            <option value="aikar">Aikar (1.12.2)</option>
+            <option value="g1">G1 простой</option>
+            <option value="none">Не трогать</option>
+          </select>
+        </label>
+      </div>
+      <div class="row">
+        <label class="field grow">
+          <span>Оперативная память: <b id="jvm-mem-label">4096 МБ</b></span>
+          <input type="range" id="jvm-mem" min="1024" max="16384" step="256" value="4096" />
+        </label>
+      </div>
+      <div class="row">
+        <label class="field grow">
+          <span>Дополнительные аргументы</span>
+          <input id="jvm-extra" placeholder="-Dfile.encoding=UTF-8" />
+        </label>
+      </div>
+      <pre class="log" id="jvm-preview">—</pre>
+    </div>
+    <div class="statusbar"><span id="jvm-status">—</span></div>
+  </section>
+
+  <!-- ===================== О КЛИЕНТЕ ===================== -->
+  <section class="screen" id="screen-about">
+    <div class="screen-head"><h2>О клиенте</h2></div>
+    <div class="panel pad about">
+      <div class="about-logo">RELOG-IC</div>
+      <p>
+        Панель оптимизации Minecraft 1.12.2: правит <code>options.txt</code>,
+        аргументы JVM в <code>launcher_profiles.json</code> и пересобирает jar клиента.
+        Всё локально, без сети и телеметрии.
+      </p>
+      <div class="kv"><span>Версия панели</span><b id="about-version">—</b></div>
+      <div class="kv"><span>Папка Minecraft</span><b id="about-dir" class="ellipsis">—</b></div>
+      <div class="kv"><span>Бэкапы</span><b>.minecraft/.relogic_backups/&lt;дата&gt;</b></div>
+      <div class="kv"><span>Пресеты</span><b>maxfps · balanced · photorealism · bodycam · fisheye · vanilla</b></div>
+      <p class="muted small">
+        Камера: «бодикам» — это ванильные smoothCamera + bobView + FOV 85°,
+        «рыбий глаз» — FOV 110°. Сглаживание здесь — mipmap-фильтрация текстур
+        (MSAA/FXAA в ванильном 1.12.2 нет, это уже OptiFine + шейдеры).
+        Панель не подменяет рендер-пайплайн и ничего не качает из сети.
+      </p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>RELOG-IC client panel</span>
+    <span class="dot">•</span>
+    <span id="foot-status">готов</span>
+  </footer>
+</main>
+
+<div class="toasts" id="toasts"></div>
+
+<script src="/app.js"></script>
+</body>
+</html>

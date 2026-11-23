@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+.venv/
+app/local_settings.json
+app/demo_minecraft/
+.relogic_backups/
+dist/api-test.jar
+ci/out/RELOG-IC-*.jar

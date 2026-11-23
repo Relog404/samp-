@@ -1,0 +1,28 @@
+================ bja
+Compiled from "SourceFile"
+public class bja extends bir {
+  protected static final nf a;
+  protected int f;
+  protected int g;
+  public int h;
+  public int i;
+  public java.lang.String j;
+  public int k;
+  public boolean l;
+  public boolean m;
+  protected boolean n;
+  public bja(int, int, int, java.lang.String);
+  public bja(int, int, int, int, int, java.lang.String);
+  protected int a(boolean);
+  public void a(bib, int, int, float);
+  protected void a(bib, int, int);
+  public void a(int, int);
+  public boolean b(bib, int, int);
+  public boolean a();
+  public void b(int, int);
+  public void a(cho);
+  public int b();
+  public void a(int);
+  static {};
+}
+(exit 0)

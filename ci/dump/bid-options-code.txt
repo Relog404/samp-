@@ -1,0 +1,844 @@
+Compiled from "SourceFile"
+public final class bid$a extends java.lang.Enum<bid$a> {
+  public static final bid$a a;
+
+  public static final bid$a b;
+
+  public static final bid$a c;
+
+  public static final bid$a d;
+
+  public static final bid$a e;
+
+  public static final bid$a f;
+
+  public static final bid$a g;
+
+  public static final bid$a h;
+
+  public static final bid$a i;
+
+  public static final bid$a j;
+
+  public static final bid$a k;
+
+  public static final bid$a l;
+
+  public static final bid$a m;
+
+  public static final bid$a n;
+
+  public static final bid$a o;
+
+  public static final bid$a p;
+
+  public static final bid$a q;
+
+  public static final bid$a r;
+
+  public static final bid$a s;
+
+  public static final bid$a t;
+
+  public static final bid$a u;
+
+  public static final bid$a v;
+
+  public static final bid$a w;
+
+  public static final bid$a x;
+
+  public static final bid$a y;
+
+  public static final bid$a z;
+
+  public static final bid$a A;
+
+  public static final bid$a B;
+
+  public static final bid$a C;
+
+  public static final bid$a D;
+
+  public static final bid$a E;
+
+  public static final bid$a F;
+
+  public static final bid$a G;
+
+  public static final bid$a H;
+
+  public static final bid$a I;
+
+  public static final bid$a J;
+
+  public static final bid$a K;
+
+  public static final bid$a L;
+
+  public static final bid$a M;
+
+  public static final bid$a N;
+
+  private final boolean O;
+
+  private final boolean P;
+
+  private final java.lang.String Q;
+
+  private final float R;
+
+  private float S;
+
+  private float T;
+
+  private static final bid$a[] U;
+
+  public static bid$a[] values();
+    Code:
+       0: getstatic     #63                 // Field U:[Lbid$a;
+       3: invokevirtual #68                 // Method "[Lbid$a;".clone:()Ljava/lang/Object;
+       6: checkcast     #64                 // class "[Lbid$a;"
+       9: areturn
+
+  public static bid$a valueOf(java.lang.String);
+    Code:
+       0: ldc           #2                  // class bid$a
+       2: aload_0
+       3: invokestatic  #73                 // Method java/lang/Enum.valueOf:(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;
+       6: checkcast     #2                  // class bid$a
+       9: areturn
+
+  public static bid$a a(int);
+    Code:
+       0: invokestatic  #77                 // Method values:()[Lbid$a;
+       3: astore_1
+       4: aload_1
+       5: arraylength
+       6: istore_2
+       7: iconst_0
+       8: istore_3
+       9: iload_3
+      10: iload_2
+      11: if_icmpge     37
+      14: aload_1
+      15: iload_3
+      16: aaload
+      17: astore        4
+      19: aload         4
+      21: invokevirtual #80                 // Method c:()I
+      24: iload_0
+      25: if_icmpne     31
+      28: aload         4
+      30: areturn
+      31: iinc          3, 1
+      34: goto          9
+      37: aconst_null
+      38: areturn
+
+  private bid$a(java.lang.String, boolean, boolean);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iload_2
+       3: aload_3
+       4: iload         4
+       6: iload         5
+       8: fconst_0
+       9: fconst_1
+      10: fconst_0
+      11: invokespecial #85                 // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZFFF)V
+      14: return
+
+  private bid$a(java.lang.String, boolean, boolean, float, float, float);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iload_2
+       3: invokespecial #89                 // Method java/lang/Enum."<init>":(Ljava/lang/String;I)V
+       6: aload_0
+       7: aload_3
+       8: putfield      #91                 // Field Q:Ljava/lang/String;
+      11: aload_0
+      12: iload         4
+      14: putfield      #93                 // Field O:Z
+      17: aload_0
+      18: iload         5
+      20: putfield      #95                 // Field P:Z
+      23: aload_0
+      24: fload         6
+      26: putfield      #97                 // Field S:F
+      29: aload_0
+      30: fload         7
+      32: putfield      #99                 // Field T:F
+      35: aload_0
+      36: fload         8
+      38: putfield      #101                // Field R:F
+      41: return
+
+  public boolean a();
+    Code:
+       0: aload_0
+       1: getfield      #93                 // Field O:Z
+       4: ireturn
+
+  public boolean b();
+    Code:
+       0: aload_0
+       1: getfield      #95                 // Field P:Z
+       4: ireturn
+
+  public int c();
+    Code:
+       0: aload_0
+       1: invokevirtual #105                // Method ordinal:()I
+       4: ireturn
+
+  public java.lang.String d();
+    Code:
+       0: aload_0
+       1: getfield      #91                 // Field Q:Ljava/lang/String;
+       4: areturn
+
+  public float e();
+    Code:
+       0: aload_0
+       1: getfield      #97                 // Field S:F
+       4: freturn
+
+  public float f();
+    Code:
+       0: aload_0
+       1: getfield      #99                 // Field T:F
+       4: freturn
+
+  public void a(float);
+    Code:
+       0: aload_0
+       1: fload_1
+       2: putfield      #99                 // Field T:F
+       5: return
+
+  public float c(float);
+    Code:
+       0: aload_0
+       1: fload_1
+       2: invokevirtual #111                // Method e:(F)F
+       5: aload_0
+       6: getfield      #97                 // Field S:F
+       9: fsub
+      10: aload_0
+      11: getfield      #99                 // Field T:F
+      14: aload_0
+      15: getfield      #97                 // Field S:F
+      18: fsub
+      19: fdiv
+      20: fconst_0
+      21: fconst_1
+      22: invokestatic  #116                // Method rk.a:(FFF)F
+      25: freturn
+
+  public float d(float);
+    Code:
+       0: aload_0
+       1: aload_0
+       2: getfield      #97                 // Field S:F
+       5: aload_0
+       6: getfield      #99                 // Field T:F
+       9: aload_0
+      10: getfield      #97                 // Field S:F
+      13: fsub
+      14: fload_1
+      15: fconst_0
+      16: fconst_1
+      17: invokestatic  #116                // Method rk.a:(FFF)F
+      20: fmul
+      21: fadd
+      22: invokevirtual #111                // Method e:(F)F
+      25: freturn
+
+  public float e(float);
+    Code:
+       0: aload_0
+       1: fload_1
+       2: invokespecial #118                // Method f:(F)F
+       5: fstore_1
+       6: fload_1
+       7: aload_0
+       8: getfield      #97                 // Field S:F
+      11: aload_0
+      12: getfield      #99                 // Field T:F
+      15: invokestatic  #116                // Method rk.a:(FFF)F
+      18: freturn
+
+  private float f(float);
+    Code:
+       0: aload_0
+       1: getfield      #101                // Field R:F
+       4: fconst_0
+       5: fcmpl
+       6: ifle          25
+       9: aload_0
+      10: getfield      #101                // Field R:F
+      13: fload_1
+      14: aload_0
+      15: getfield      #101                // Field R:F
+      18: fdiv
+      19: invokestatic  #124                // Method java/lang/Math.round:(F)I
+      22: i2f
+      23: fmul
+      24: fstore_1
+      25: fload_1
+      26: freturn
+
+  static float a(bid$a);
+    Code:
+       0: aload_0
+       1: getfield      #99                 // Field T:F
+       4: freturn
+
+  static float b(bid$a);
+    Code:
+       0: aload_0
+       1: getfield      #97                 // Field S:F
+       4: freturn
+
+  static {};
+    Code:
+       0: new           #2                  // class bid$a
+       3: dup
+       4: ldc           #129                // String INVERT_MOUSE
+       6: iconst_0
+       7: ldc           #131                // String options.invertMouse
+       9: iconst_0
+      10: iconst_1
+      11: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+      14: putstatic     #135                // Field a:Lbid$a;
+      17: new           #2                  // class bid$a
+      20: dup
+      21: ldc           #137                // String SENSITIVITY
+      23: iconst_1
+      24: ldc           #139                // String options.sensitivity
+      26: iconst_1
+      27: iconst_0
+      28: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+      31: putstatic     #141                // Field b:Lbid$a;
+      34: new           #2                  // class bid$a
+      37: dup
+      38: ldc           #143                // String FOV
+      40: iconst_2
+      41: ldc           #145                // String options.fov
+      43: iconst_1
+      44: iconst_0
+      45: ldc           #146                // float 30.0f
+      47: ldc           #147                // float 110.0f
+      49: fconst_1
+      50: invokespecial #85                 // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZFFF)V
+      53: putstatic     #149                // Field c:Lbid$a;
+      56: new           #2                  // class bid$a
+      59: dup
+      60: ldc           #151                // String GAMMA
+      62: iconst_3
+      63: ldc           #153                // String options.gamma
+      65: iconst_1
+      66: iconst_0
+      67: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+      70: putstatic     #155                // Field d:Lbid$a;
+      73: new           #2                  // class bid$a
+      76: dup
+      77: ldc           #157                // String SATURATION
+      79: iconst_4
+      80: ldc           #159                // String options.saturation
+      82: iconst_1
+      83: iconst_0
+      84: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+      87: putstatic     #161                // Field e:Lbid$a;
+      90: new           #2                  // class bid$a
+      93: dup
+      94: ldc           #163                // String RENDER_DISTANCE
+      96: iconst_5
+      97: ldc           #165                // String options.renderDistance
+      99: iconst_1
+     100: iconst_0
+     101: fconst_2
+     102: ldc           #166                // float 16.0f
+     104: fconst_1
+     105: invokespecial #85                 // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZFFF)V
+     108: putstatic     #168                // Field f:Lbid$a;
+     111: new           #2                  // class bid$a
+     114: dup
+     115: ldc           #170                // String VIEW_BOBBING
+     117: bipush        6
+     119: ldc           #172                // String options.viewBobbing
+     121: iconst_0
+     122: iconst_1
+     123: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     126: putstatic     #174                // Field g:Lbid$a;
+     129: new           #2                  // class bid$a
+     132: dup
+     133: ldc           #176                // String ANAGLYPH
+     135: bipush        7
+     137: ldc           #178                // String options.anaglyph
+     139: iconst_0
+     140: iconst_1
+     141: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     144: putstatic     #180                // Field h:Lbid$a;
+     147: new           #2                  // class bid$a
+     150: dup
+     151: ldc           #182                // String FRAMERATE_LIMIT
+     153: bipush        8
+     155: ldc           #184                // String options.framerateLimit
+     157: iconst_1
+     158: iconst_0
+     159: ldc           #185                // float 10.0f
+     161: ldc           #186                // float 260.0f
+     163: ldc           #185                // float 10.0f
+     165: invokespecial #85                 // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZFFF)V
+     168: putstatic     #188                // Field i:Lbid$a;
+     171: new           #2                  // class bid$a
+     174: dup
+     175: ldc           #190                // String FBO_ENABLE
+     177: bipush        9
+     179: ldc           #192                // String options.fboEnable
+     181: iconst_0
+     182: iconst_1
+     183: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     186: putstatic     #194                // Field j:Lbid$a;
+     189: new           #2                  // class bid$a
+     192: dup
+     193: ldc           #196                // String RENDER_CLOUDS
+     195: bipush        10
+     197: ldc           #198                // String options.renderClouds
+     199: iconst_0
+     200: iconst_0
+     201: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     204: putstatic     #200                // Field k:Lbid$a;
+     207: new           #2                  // class bid$a
+     210: dup
+     211: ldc           #202                // String GRAPHICS
+     213: bipush        11
+     215: ldc           #204                // String options.graphics
+     217: iconst_0
+     218: iconst_0
+     219: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     222: putstatic     #206                // Field l:Lbid$a;
+     225: new           #2                  // class bid$a
+     228: dup
+     229: ldc           #208                // String AMBIENT_OCCLUSION
+     231: bipush        12
+     233: ldc           #210                // String options.ao
+     235: iconst_0
+     236: iconst_0
+     237: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     240: putstatic     #212                // Field m:Lbid$a;
+     243: new           #2                  // class bid$a
+     246: dup
+     247: ldc           #214                // String GUI_SCALE
+     249: bipush        13
+     251: ldc           #216                // String options.guiScale
+     253: iconst_0
+     254: iconst_0
+     255: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     258: putstatic     #218                // Field n:Lbid$a;
+     261: new           #2                  // class bid$a
+     264: dup
+     265: ldc           #220                // String PARTICLES
+     267: bipush        14
+     269: ldc           #222                // String options.particles
+     271: iconst_0
+     272: iconst_0
+     273: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     276: putstatic     #224                // Field o:Lbid$a;
+     279: new           #2                  // class bid$a
+     282: dup
+     283: ldc           #226                // String CHAT_VISIBILITY
+     285: bipush        15
+     287: ldc           #228                // String options.chat.visibility
+     289: iconst_0
+     290: iconst_0
+     291: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     294: putstatic     #230                // Field p:Lbid$a;
+     297: new           #2                  // class bid$a
+     300: dup
+     301: ldc           #232                // String CHAT_COLOR
+     303: bipush        16
+     305: ldc           #234                // String options.chat.color
+     307: iconst_0
+     308: iconst_1
+     309: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     312: putstatic     #236                // Field q:Lbid$a;
+     315: new           #2                  // class bid$a
+     318: dup
+     319: ldc           #238                // String CHAT_LINKS
+     321: bipush        17
+     323: ldc           #240                // String options.chat.links
+     325: iconst_0
+     326: iconst_1
+     327: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     330: putstatic     #242                // Field r:Lbid$a;
+     333: new           #2                  // class bid$a
+     336: dup
+     337: ldc           #244                // String CHAT_OPACITY
+     339: bipush        18
+     341: ldc           #246                // String options.chat.opacity
+     343: iconst_1
+     344: iconst_0
+     345: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     348: putstatic     #248                // Field s:Lbid$a;
+     351: new           #2                  // class bid$a
+     354: dup
+     355: ldc           #250                // String CHAT_LINKS_PROMPT
+     357: bipush        19
+     359: ldc           #252                // String options.chat.links.prompt
+     361: iconst_0
+     362: iconst_1
+     363: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     366: putstatic     #254                // Field t:Lbid$a;
+     369: new           #2                  // class bid$a
+     372: dup
+     373: ldc_w         #256                // String SNOOPER_ENABLED
+     376: bipush        20
+     378: ldc_w         #258                // String options.snooper
+     381: iconst_0
+     382: iconst_1
+     383: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     386: putstatic     #260                // Field u:Lbid$a;
+     389: new           #2                  // class bid$a
+     392: dup
+     393: ldc_w         #262                // String USE_FULLSCREEN
+     396: bipush        21
+     398: ldc_w         #264                // String options.fullscreen
+     401: iconst_0
+     402: iconst_1
+     403: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     406: putstatic     #266                // Field v:Lbid$a;
+     409: new           #2                  // class bid$a
+     412: dup
+     413: ldc_w         #268                // String ENABLE_VSYNC
+     416: bipush        22
+     418: ldc_w         #270                // String options.vsync
+     421: iconst_0
+     422: iconst_1
+     423: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     426: putstatic     #272                // Field w:Lbid$a;
+     429: new           #2                  // class bid$a
+     432: dup
+     433: ldc_w         #274                // String USE_VBO
+     436: bipush        23
+     438: ldc_w         #276                // String options.vbo
+     441: iconst_0
+     442: iconst_1
+     443: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     446: putstatic     #278                // Field x:Lbid$a;
+     449: new           #2                  // class bid$a
+     452: dup
+     453: ldc_w         #280                // String TOUCHSCREEN
+     456: bipush        24
+     458: ldc_w         #282                // String options.touchscreen
+     461: iconst_0
+     462: iconst_1
+     463: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     466: putstatic     #284                // Field y:Lbid$a;
+     469: new           #2                  // class bid$a
+     472: dup
+     473: ldc_w         #286                // String CHAT_SCALE
+     476: bipush        25
+     478: ldc_w         #288                // String options.chat.scale
+     481: iconst_1
+     482: iconst_0
+     483: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     486: putstatic     #290                // Field z:Lbid$a;
+     489: new           #2                  // class bid$a
+     492: dup
+     493: ldc_w         #292                // String CHAT_WIDTH
+     496: bipush        26
+     498: ldc_w         #294                // String options.chat.width
+     501: iconst_1
+     502: iconst_0
+     503: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     506: putstatic     #296                // Field A:Lbid$a;
+     509: new           #2                  // class bid$a
+     512: dup
+     513: ldc_w         #298                // String CHAT_HEIGHT_FOCUSED
+     516: bipush        27
+     518: ldc_w         #300                // String options.chat.height.focused
+     521: iconst_1
+     522: iconst_0
+     523: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     526: putstatic     #302                // Field B:Lbid$a;
+     529: new           #2                  // class bid$a
+     532: dup
+     533: ldc_w         #304                // String CHAT_HEIGHT_UNFOCUSED
+     536: bipush        28
+     538: ldc_w         #306                // String options.chat.height.unfocused
+     541: iconst_1
+     542: iconst_0
+     543: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     546: putstatic     #308                // Field C:Lbid$a;
+     549: new           #2                  // class bid$a
+     552: dup
+     553: ldc_w         #310                // String MIPMAP_LEVELS
+     556: bipush        29
+     558: ldc_w         #312                // String options.mipmapLevels
+     561: iconst_1
+     562: iconst_0
+     563: fconst_0
+     564: ldc_w         #313                // float 4.0f
+     567: fconst_1
+     568: invokespecial #85                 // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZFFF)V
+     571: putstatic     #315                // Field D:Lbid$a;
+     574: new           #2                  // class bid$a
+     577: dup
+     578: ldc_w         #317                // String FORCE_UNICODE_FONT
+     581: bipush        30
+     583: ldc_w         #319                // String options.forceUnicodeFont
+     586: iconst_0
+     587: iconst_1
+     588: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     591: putstatic     #321                // Field E:Lbid$a;
+     594: new           #2                  // class bid$a
+     597: dup
+     598: ldc_w         #323                // String REDUCED_DEBUG_INFO
+     601: bipush        31
+     603: ldc_w         #325                // String options.reducedDebugInfo
+     606: iconst_0
+     607: iconst_1
+     608: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     611: putstatic     #327                // Field F:Lbid$a;
+     614: new           #2                  // class bid$a
+     617: dup
+     618: ldc_w         #329                // String ENTITY_SHADOWS
+     621: bipush        32
+     623: ldc_w         #331                // String options.entityShadows
+     626: iconst_0
+     627: iconst_1
+     628: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     631: putstatic     #333                // Field G:Lbid$a;
+     634: new           #2                  // class bid$a
+     637: dup
+     638: ldc_w         #335                // String MAIN_HAND
+     641: bipush        33
+     643: ldc_w         #337                // String options.mainHand
+     646: iconst_0
+     647: iconst_0
+     648: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     651: putstatic     #339                // Field H:Lbid$a;
+     654: new           #2                  // class bid$a
+     657: dup
+     658: ldc_w         #341                // String ATTACK_INDICATOR
+     661: bipush        34
+     663: ldc_w         #343                // String options.attackIndicator
+     666: iconst_0
+     667: iconst_0
+     668: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     671: putstatic     #345                // Field I:Lbid$a;
+     674: new           #2                  // class bid$a
+     677: dup
+     678: ldc_w         #347                // String ENABLE_WEAK_ATTACKS
+     681: bipush        35
+     683: ldc_w         #349                // String options.enableWeakAttacks
+     686: iconst_0
+     687: iconst_1
+     688: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     691: putstatic     #351                // Field J:Lbid$a;
+     694: new           #2                  // class bid$a
+     697: dup
+     698: ldc_w         #353                // String SHOW_SUBTITLES
+     701: bipush        36
+     703: ldc_w         #355                // String options.showSubtitles
+     706: iconst_0
+     707: iconst_1
+     708: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     711: putstatic     #357                // Field K:Lbid$a;
+     714: new           #2                  // class bid$a
+     717: dup
+     718: ldc_w         #359                // String REALMS_NOTIFICATIONS
+     721: bipush        37
+     723: ldc_w         #361                // String options.realmsNotifications
+     726: iconst_0
+     727: iconst_1
+     728: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     731: putstatic     #363                // Field L:Lbid$a;
+     734: new           #2                  // class bid$a
+     737: dup
+     738: ldc_w         #365                // String AUTO_JUMP
+     741: bipush        38
+     743: ldc_w         #367                // String options.autoJump
+     746: iconst_0
+     747: iconst_1
+     748: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     751: putstatic     #369                // Field M:Lbid$a;
+     754: new           #2                  // class bid$a
+     757: dup
+     758: ldc_w         #371                // String NARRATOR
+     761: bipush        39
+     763: ldc_w         #373                // String options.narrator
+     766: iconst_0
+     767: iconst_0
+     768: invokespecial #133                // Method "<init>":(Ljava/lang/String;ILjava/lang/String;ZZ)V
+     771: putstatic     #375                // Field N:Lbid$a;
+     774: bipush        40
+     776: anewarray     #2                  // class bid$a
+     779: dup
+     780: iconst_0
+     781: getstatic     #135                // Field a:Lbid$a;
+     784: aastore
+     785: dup
+     786: iconst_1
+     787: getstatic     #141                // Field b:Lbid$a;
+     790: aastore
+     791: dup
+     792: iconst_2
+     793: getstatic     #149                // Field c:Lbid$a;
+     796: aastore
+     797: dup
+     798: iconst_3
+     799: getstatic     #155                // Field d:Lbid$a;
+     802: aastore
+     803: dup
+     804: iconst_4
+     805: getstatic     #161                // Field e:Lbid$a;
+     808: aastore
+     809: dup
+     810: iconst_5
+     811: getstatic     #168                // Field f:Lbid$a;
+     814: aastore
+     815: dup
+     816: bipush        6
+     818: getstatic     #174                // Field g:Lbid$a;
+     821: aastore
+     822: dup
+     823: bipush        7
+     825: getstatic     #180                // Field h:Lbid$a;
+     828: aastore
+     829: dup
+     830: bipush        8
+     832: getstatic     #188                // Field i:Lbid$a;
+     835: aastore
+     836: dup
+     837: bipush        9
+     839: getstatic     #194                // Field j:Lbid$a;
+     842: aastore
+     843: dup
+     844: bipush        10
+     846: getstatic     #200                // Field k:Lbid$a;
+     849: aastore
+     850: dup
+     851: bipush        11
+     853: getstatic     #206                // Field l:Lbid$a;
+     856: aastore
+     857: dup
+     858: bipush        12
+     860: getstatic     #212                // Field m:Lbid$a;
+     863: aastore
+     864: dup
+     865: bipush        13
+     867: getstatic     #218                // Field n:Lbid$a;
+     870: aastore
+     871: dup
+     872: bipush        14
+     874: getstatic     #224                // Field o:Lbid$a;
+     877: aastore
+     878: dup
+     879: bipush        15
+     881: getstatic     #230                // Field p:Lbid$a;
+     884: aastore
+     885: dup
+     886: bipush        16
+     888: getstatic     #236                // Field q:Lbid$a;
+     891: aastore
+     892: dup
+     893: bipush        17
+     895: getstatic     #242                // Field r:Lbid$a;
+     898: aastore
+     899: dup
+     900: bipush        18
+     902: getstatic     #248                // Field s:Lbid$a;
+     905: aastore
+     906: dup
+     907: bipush        19
+     909: getstatic     #254                // Field t:Lbid$a;
+     912: aastore
+     913: dup
+     914: bipush        20
+     916: getstatic     #260                // Field u:Lbid$a;
+     919: aastore
+     920: dup
+     921: bipush        21
+     923: getstatic     #266                // Field v:Lbid$a;
+     926: aastore
+     927: dup
+     928: bipush        22
+     930: getstatic     #272                // Field w:Lbid$a;
+     933: aastore
+     934: dup
+     935: bipush        23
+     937: getstatic     #278                // Field x:Lbid$a;
+     940: aastore
+     941: dup
+     942: bipush        24
+     944: getstatic     #284                // Field y:Lbid$a;
+     947: aastore
+     948: dup
+     949: bipush        25
+     951: getstatic     #290                // Field z:Lbid$a;
+     954: aastore
+     955: dup
+     956: bipush        26
+     958: getstatic     #296                // Field A:Lbid$a;
+     961: aastore
+     962: dup
+     963: bipush        27
+     965: getstatic     #302                // Field B:Lbid$a;
+     968: aastore
+     969: dup
+     970: bipush        28
+     972: getstatic     #308                // Field C:Lbid$a;
+     975: aastore
+     976: dup
+     977: bipush        29
+     979: getstatic     #315                // Field D:Lbid$a;
+     982: aastore
+     983: dup
+     984: bipush        30
+     986: getstatic     #321                // Field E:Lbid$a;
+     989: aastore
+     990: dup
+     991: bipush        31
+     993: getstatic     #327                // Field F:Lbid$a;
+     996: aastore
+     997: dup
+     998: bipush        32
+    1000: getstatic     #333                // Field G:Lbid$a;
+    1003: aastore
+    1004: dup
+    1005: bipush        33
+    1007: getstatic     #339                // Field H:Lbid$a;
+    1010: aastore
+    1011: dup
+    1012: bipush        34
+    1014: getstatic     #345                // Field I:Lbid$a;
+    1017: aastore
+    1018: dup
+    1019: bipush        35
+    1021: getstatic     #351                // Field J:Lbid$a;
+    1024: aastore
+    1025: dup
+    1026: bipush        36
+    1028: getstatic     #357                // Field K:Lbid$a;
+    1031: aastore
+    1032: dup
+    1033: bipush        37
+    1035: getstatic     #363                // Field L:Lbid$a;
+    1038: aastore
+    1039: dup
+    1040: bipush        38
+    1042: getstatic     #369                // Field M:Lbid$a;
+    1045: aastore
+    1046: dup
+    1047: bipush        39
+    1049: getstatic     #375                // Field N:Lbid$a;
+    1052: aastore
+    1053: putstatic     #63                 // Field U:[Lbid$a;
+    1056: return
+}
