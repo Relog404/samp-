@@ -24,7 +24,8 @@ import sys
 import zipfile
 from pathlib import Path
 
-BASE = Path(__file__).resolve().parent.parent / "Impact-4.9.1-1.12.2.jar"
+ROOT = Path(__file__).resolve().parent.parent
+BASE = ROOT / "Impact-4.9.1-1.12.2.jar"
 CONFIG = "mixins.relogic.json"
 REQUIRED_CONFIGS = {"mixins.capi.json", "mixins.impact.json", "mixins.baritone.json", CONFIG}
 
@@ -50,6 +51,22 @@ TARGETS = {
 
 SRG_DUMP = ROOT / "ci" / "dump" / "srg-1.12.2.txt"
 
+# every reflective call the client layer makes: (srg class, srg method, descriptor)
+REFLECTION_SIGNATURES = [
+    ("net.minecraft.client.Minecraft", "func_71410_x", "()Lnet/minecraft/client/Minecraft;"),
+    ("net.minecraft.client.gui.Gui", "func_73734_a", "(IIIII)V"),
+    ("net.minecraft.client.gui.FontRenderer", "func_78276_b", "(Ljava/lang/String;III)I"),
+    ("net.minecraft.client.gui.FontRenderer", "func_78256_a", "(Ljava/lang/String;)I"),
+    ("net.minecraft.client.gui.ScaledResolution", "func_78326_a", "()I"),
+    ("net.minecraft.client.gui.ScaledResolution", "func_78328_b", "()I"),
+    ("net.minecraft.client.settings.GameSettings", "func_74296_a",
+     "(Lnet/minecraft/client/settings/GameSettings$Options;)F"),
+    ("net.minecraft.client.settings.GameSettings", "func_74306_a",
+     "(Lnet/minecraft/client/settings/GameSettings$Options;I)V"),
+    ("net.minecraft.client.settings.GameSettings", "func_74304_a",
+     "(Lnet/minecraft/client/settings/GameSettings$Options;F)V"),
+]
+
 
 def srg_methods(text: str):
     """Parse FD/MD lines into {(srg owner, srg member, srg descriptor)}."""
@@ -62,6 +79,7 @@ def srg_methods(text: str):
             continue
         target = parts[3] if parts[0] == "MD:" else parts[2]
         owner, _, member = target.rpartition("/")
+        owner = owner.replace("/", ".")
         descriptor = parts[4] if parts[0] == "MD:" and len(parts) > 4 else ""
         found.add((owner, member, descriptor))
     return found
@@ -278,6 +296,31 @@ def main(argv) -> int:
 
         srg_text = SRG_DUMP.read_text(encoding="utf-8") if SRG_DUMP.exists() else ""
 
+        if srg_text:
+            srg = srg_methods(srg_text)
+            for entry, variants in TARGETS.items():
+                for target, method, desc in variants:
+                    if "." not in target:
+                        continue
+                    if (target, method, desc) in srg:
+                        print("target ok (srg): %s.%s%s" % (target, method, desc))
+                    else:
+                        errors.append("SRG target unknown: %s.%s%s" % (target, method, desc))
+            for owner, method, desc in REFLECTION_SIGNATURES:
+                if (owner, method, desc) not in srg:
+                    errors.append("reflection signature unknown: %s.%s%s" % (owner, method, desc))
+                else:
+                    print("reflection ok: %s.%s%s" % (owner, method, desc))
+            flat_srg = srg_text.replace("/", ".")
+            names = class_strings(jar.read("RelogicClient.class"))
+            missing = sorted(n for n in names if n not in flat_srg)
+            if missing:
+                errors.append("reflection names not in srg dump: %s" % ", ".join(missing[:6]))
+            else:
+                print("reflection names ok: %d checked against mcp-1.12.2-srg" % len(names))
+        else:
+            print("srg dump not found: SRG name checks skipped")
+
         if client_path and client_path.exists():
             with zipfile.ZipFile(client_path) as client:
                 client_names = set(client.namelist())
@@ -292,10 +335,8 @@ def main(argv) -> int:
                                 errors.append("target method missing: %s.%s%s" % (target, method, desc))
                             else:
                                 print("target ok (notch): %s.%s%s" % (target, method, desc))
-                        elif srg_methods(srg_text) and (target, method, desc) not in srg_methods(srg_text):
-                            errors.append("SRG target unknown: %s.%s%s" % (target, method, desc))
                         else:
-                            print("target ok (srg): %s.%s%s" % (target, method, desc))
+                            continue  # SRG variants are verified above
                 for entry in classes:
                     path = "%s/%s.class" % (package, entry)
                     refs = parse_class(jar.read(path))
@@ -307,13 +348,6 @@ def main(argv) -> int:
                     if unknown:
                         errors.append("%s references unknown classes: %s" % (entry, unknown))
 
-                if srg_text:
-                    names = class_strings(jar.read("RelogicClient.class"))
-                    missing_names = sorted(n for n in names if n not in srg_text)
-                    if missing_names:
-                        errors.append("reflection names not in srg dump: %s" % ", ".join(missing_names[:6]))
-                    else:
-                        print("reflection names ok: %d checked against srg" % len(names))
         else:
             print("client.jar not supplied: target/method checks skipped")
 

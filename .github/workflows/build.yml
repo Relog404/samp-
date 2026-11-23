@@ -247,6 +247,28 @@ jobs:
           PY
           grep -c . ci/dump/srg-1.12.2.txt
 
+          echo "### csv name checks"
+          python3 - <<'PY' > ci/dump/csv-check.txt 2>&1
+          import csv, io, zipfile
+          z = zipfile.ZipFile("/tmp/mcp.zip")
+          names = {}
+          for f in ("fields.csv", "methods.csv"):
+              for row in csv.DictReader(io.StringIO(z.read(f).decode("utf-8"))):
+                  names[row["searge"]] = (f, row["name"])
+          ids = [
+              "field_146120_f", "field_146121_g", "field_146128_h", "field_146129_i",
+              "field_146126_j", "field_146127_k", "field_146124_l", "field_146125_m",
+              "field_71466_p", "field_71474_y", "field_71462_r", "field_71443_c", "field_71440_d",
+              "field_146292_n", "field_146294_l", "field_146295_m", "field_146297_k",
+              "func_78276_b", "func_78256_a", "func_73734_a", "func_71410_x", "func_71407_l",
+              "func_73863_a", "func_175180_a", "func_78326_a", "func_78328_b",
+              "func_74296_a", "func_74306_a", "func_74304_a", "func_74303_b",
+          ]
+          for i in ids:
+              print("%-18s %s" % (i, names.get(i, "??")))
+          PY
+          cat ci/dump/csv-check.txt
+
           echo "### compile"
           if [ -d src/mod/java ] && [ -n "$(find src/mod/java -name '*.java' -print -quit)" ]; then
             javac -encoding UTF-8 -source 8 -target 8 -nowarn -proc:none \
