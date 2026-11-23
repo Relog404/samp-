@@ -19,6 +19,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 import zipfile
 from pathlib import Path
@@ -27,12 +28,25 @@ BASE = Path(__file__).resolve().parent.parent / "Impact-4.9.1-1.12.2.jar"
 CONFIG = "mixins.relogic.json"
 REQUIRED_CONFIGS = {"mixins.capi.json", "mixins.impact.json", "mixins.baritone.json", CONFIG}
 
+# entries build_client.py intentionally rewrites
+ALLOWED_CHANGED = {"META-INF/MANIFEST.MF", "mixins.impact.json", "log4j2.xml"}
+
 # mixin class -> (target class, target method name, descriptor)
 TARGETS = {
     "MixinGuiMainMenu": ("blr", "a", "(IIF)V"),
     "MixinGuiIngame": ("biq", "a", "(F)V"),
     "MixinMinecraft": ("bib", "t", "()V"),
 }
+
+
+def build_client_mixins():
+    """Mixins that build_client.py removes from Impact's config (branding)."""
+    return (
+        "MixinGuiOverlayDebug",
+        "gui.MixinGuiIngame",
+        "gui.MixinGuiIngameMenu",
+        "gui.MixinGuiMainMenu",
+    )
 
 
 def parse_class(data: bytes):
@@ -157,7 +171,8 @@ def main(argv) -> int:
         missing = base_names - names
         if missing:
             errors.append("lost base entries: %s" % ", ".join(sorted(missing)[:5]))
-        changed = {n for n in base_names & names if n != "META-INF/MANIFEST.MF" and base.read(n) != jar.read(n)}
+        changed = {n for n in base_names & names
+                   if n not in ALLOWED_CHANGED and base.read(n) != jar.read(n)}
         if changed:
             errors.append("base entries changed: %s" % ", ".join(sorted(changed)[:5]))
 
@@ -188,7 +203,17 @@ def main(argv) -> int:
             if path not in names:
                 errors.append("mixin class missing from jar: %s" % path)
 
+        impact = json.loads(jar.read("mixins.impact.json").decode("utf-8"))
+        left = [m for m in impact.get("client", []) if m in build_client_mixins()]
+        if left:
+            errors.append("Impact branding mixins still active: %s" % ", ".join(left))
+
+        level = re.search(r'<Root level="([^"]+)"', jar.read("log4j2.xml").decode("utf-8", "replace"))
+        if not level or level.group(1) != "off":
+            errors.append("log4j root level is %s, expected off" % (level.group(1) if level else "missing"))
+
         print("entries: %d | base: %d | configs: %s" % (len(names), len(base_names), sorted(configs)))
+        print("impact client mixins: %d | log4j root: %s" % (len(impact.get("client", [])), level.group(1) if level else "?"))
         print("mixins: %s" % classes)
 
         if client_path and client_path.exists():

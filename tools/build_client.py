@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import struct
+import re
 import sys
 import zipfile
 import zlib
@@ -33,6 +33,38 @@ BASE_JAR = ROOT / "Impact-4.9.1-1.12.2.jar"
 DEFAULT_MODULE = ROOT / "ci" / "out" / "relogic-module.jar"
 DEFAULT_OUT = ROOT / "dist" / "RELOG-IC-4.9.1-1.12.2.jar"
 CONFIG = "mixins.relogic.json"
+
+# Impact's own GUI/branding mixins: dropped so the client looks vanilla.
+STRIP_MIXINS = (
+    "MixinGuiOverlayDebug",
+    "gui.MixinGuiIngame",
+    "gui.MixinGuiIngameMenu",
+    "gui.MixinGuiMainMenu",
+)
+
+
+def prune_branding_mixins(data: bytes):
+    """Remove Impact's GUI/branding mixins from its config, keep everything else."""
+    config = json.loads(data.decode("utf-8"))
+    removed = []
+    for key in ("mixins", "client", "server"):
+        if key not in config:
+            continue
+        keep = []
+        for name in config[key]:
+            if name in STRIP_MIXINS:
+                removed.append(name)
+            else:
+                keep.append(name)
+        config[key] = keep
+    return json.dumps(config, indent=2).encode("utf-8"), removed
+
+
+def silence_logs(data: bytes):
+    """Force log4j root level to 'off': nothing about the client reaches logs."""
+    text = data.decode("utf-8")
+    patched, count = re.subn(r'(<Root level=")[^"]+(")', r'\1off\2', text)
+    return patched.encode("utf-8"), count
 
 
 def wrap_manifest_value(name: str, value: str, limit: int = 70) -> bytes:
@@ -134,7 +166,15 @@ def main(argv=None) -> int:
 
     replaced = 0
     kept = []
+    stripped = []
     for name, info, data in entries:
+        if name == "mixins.impact.json":
+            data, removed = prune_branding_mixins(data)
+            stripped.extend(removed)
+        elif name == "log4j2.xml":
+            data, count = silence_logs(data)
+            if count:
+                stripped.append("log4j:root=off")
         if name in module_entries:
             kept.append((name, info, module_entries[name]))
             replaced += 1
@@ -161,6 +201,7 @@ def main(argv=None) -> int:
     print("module: %s (%d entries)" % (args.module, len(module_entries)))
     print("out   : %s" % args.out)
     print("replaced: %d, added: %d" % (replaced, added))
+    print("branding stripped: %s" % (", ".join(stripped) or "nothing"))
     print("MixinConfigs -> %s" % build_manifest(
         zipfile.ZipFile(args.out).read("META-INF/MANIFEST.MF"), []).decode("utf-8").replace("\r\n", "\n"))
     return 0
