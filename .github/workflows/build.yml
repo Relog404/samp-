@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 env:
-  PROBE_CLASSES: "bib blk bja bjb bid bip biq bit blm bze bzf bje bjd bjc"
+  PROBE_CLASSES: "bib blk bja blr bir blg bjb bid bip biq bit bhy biy biz"
 
 jobs:
   build:
@@ -50,8 +50,20 @@ jobs:
           except Exception as exc:
               print("download failed:", exc)
           PY
-          curl -sSL --retry 2 -o /tmp/mc/lwjgl.jar https://repo1.maven.org/maven2/org/lwjgl/lwjgl/lwjgl/2.9.4-nightly-20150209/lwjgl-2.9.4-nightly-20150209.jar || echo "lwjgl download failed"
-          curl -sSL --retry 2 -o /tmp/mc/lwjgl-util.jar https://repo1.maven.org/maven2/org/lwjgl/lwjgl/lwjgl_util/2.9.4-nightly-20150209/lwjgl_util-2.9.4-nightly-20150209.jar || echo "lwjgl_util download failed"
+          python3 - <<'PY'
+          import json, os, urllib.request
+          man = json.load(urllib.request.urlopen("https://launchermeta.mojang.com/mc/game/version_manifest.json"))
+          entry = [v for v in man["versions"] if v["id"] == "1.12.2"][0]
+          meta = json.load(urllib.request.urlopen(entry["url"]))
+          for lib in meta["libraries"]:
+              name = lib.get("name", "")
+              if name.startswith(("org.lwjgl.lwjgl:lwjgl:", "org.lwjgl.lwjgl:lwjgl_util:")):
+                  art = lib["downloads"]["artifact"]
+                  data = urllib.request.urlopen(art["url"]).read()
+                  out = "/tmp/mc/" + os.path.basename(art["path"])
+                  open(out, "wb").write(data)
+                  print("lib:", name, len(data))
+          PY
           ls -la /tmp/mc
 
           echo "### javap dumps"
@@ -60,8 +72,67 @@ jobs:
             javap -p -classpath /tmp/mc/client.jar "$c" >> "ci/dump/$c.txt" 2>&1
             echo "(exit $?)" >> "ci/dump/$c.txt"
           done
-          javap -p -classpath /tmp/mc/lwjgl.jar org.lwjgl.input.Keyboard > ci/dump/lwjgl-keyboard.txt 2>&1
-          javap -p -classpath /tmp/mc/lwjgl.jar org.lwjgl.input.Mouse > ci/dump/lwjgl-mouse.txt 2>&1
+          for j in /tmp/mc/lwjgl*.jar; do
+            javap -p -classpath "$j" org.lwjgl.input.Keyboard > "ci/dump/lwjgl-keyboard.txt" 2>&1 && break
+          done
+          for j in /tmp/mc/lwjgl*.jar; do
+            javap -p -classpath "$j" org.lwjgl.input.Mouse > "ci/dump/lwjgl-mouse.txt" 2>&1 && break
+          done
+
+          echo "### mcp mappings"
+          curl -sSL --retry 2 -o /tmp/mcp.zip https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_stable/39-1.12/mcp_stable-39-1.12.zip || echo "mcp download failed"
+          python3 - <<'PY' > ci/dump/mcp-map.txt 2>&1
+          import csv, io, os, zipfile
+          try:
+              z = zipfile.ZipFile("/tmp/mcp.zip")
+          except Exception as exc:
+              print("cannot open mcp zip:", exc)
+              raise SystemExit
+          print("zip entries:", z.namelist()[:40])
+          srgs = {}
+          for entry in z.namelist():
+              if entry.endswith(".srg"):
+                  text = z.read(entry).decode("utf-8", "replace")
+                  srgs[entry] = text
+                  print("srg file:", entry, len(text))
+          print("----")
+          # fields.csv: searge,name,side,desc
+          names = {}
+          for f in ("fields.csv", "methods.csv"):
+              if f in z.namelist():
+                  reader = csv.DictReader(io.StringIO(z.read(f).decode("utf-8")))
+                  for row in reader:
+                      names[row["searge"]] = row["name"]
+          print("mcp names:", len(names))
+          targets = ["renderDistanceChunks", "particles", "mipmapLevels", "limitFramerate",
+                     "fovSetting", "gammaSetting", "smoothCamera", "fancyGraphics",
+                     "ambientOcclusion", "clouds", "chatOpacity", "chatScale", "guiScale",
+                     "anaglyph", "pauseOnLostFocus", "saveOptions", "getKeyBinding",
+                     "drawScreen", "initGui", "drawRect", "drawString", "drawCenteredString",
+                     "getScaledWidth", "getScaledHeight", "renderGameOverlay",
+                     "getMinecraft", "drawStringWithShadow", "mousePressed"]
+          searge_for = {}
+          for searge, name in names.items():
+              if name in targets:
+                  searge_for.setdefault(name, []).append(searge)
+          print("target searge:", searge_for)
+          # notch <-> srg: lines like "FD: bid/x net/minecraft/.../field_151451_c"
+          pairs = {}
+          for entry, text in srgs.items():
+              for line in text.splitlines():
+                  if line.startswith(("FD:", "MD:")):
+                      parts = line.split()
+                      if len(parts) >= 3:
+                          pairs.setdefault(entry, []).append(parts[1:])
+          for entry, rows in pairs.items():
+              print("==", entry, len(rows))
+              srg_set = set(searge_for.get(t, []) for t in targets)
+              flat = {s for grp in srg_set for s in grp}
+              for a, b in rows:
+                  if a.rsplit("/", 1)[-1] in flat or b.rsplit("/", 1)[-1] in flat:
+                      print("   ", a, "<->", b)
+          PY
+          head -5 ci/dump/mcp-map.txt
 
           echo "### compile"
           if [ -d src/mod/java ] && [ -n "$(find src/mod/java -name '*.java' -print -quit)" ]; then
