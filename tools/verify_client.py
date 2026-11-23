@@ -51,6 +51,13 @@ TARGETS = {
 
 SRG_DUMP = ROOT / "ci" / "dump" / "srg-1.12.2.txt"
 
+# annotation attributes we rely on, checked against the Mixin API shipped in the jar
+MIXIN_API = {
+    "org/spongepowered/asm/mixin/injection/Inject.class": {"method", "at", "remap", "require"},
+    "org/spongepowered/asm/mixin/Mixin.class": {"targets", "remap"},
+    "org/spongepowered/asm/mixin/injection/At.class": {"value", "shift"},
+}
+
 # every reflective call the client layer makes: (srg class, srg method, descriptor)
 REFLECTION_SIGNATURES = [
     ("net.minecraft.client.Minecraft", "func_71410_x", "()Lnet/minecraft/client/Minecraft;"),
@@ -255,6 +262,16 @@ def main(argv) -> int:
         if changed:
             errors.append("base entries changed: %s" % ", ".join(sorted(changed)[:5]))
 
+        for path, required in MIXIN_API.items():
+            if path not in base_names:
+                errors.append("mixin api missing from base jar: %s" % path)
+                continue
+            available = {name for name, _ in methods_of(base.read(path))}
+            missing_attrs = required - available
+            if missing_attrs:
+                errors.append("%s lacks %s" % (path, sorted(missing_attrs)))
+        print("mixin api: %s" % ", ".join(sorted(MIXIN_API)))
+
         signatures = [n for n in names if n.upper().endswith((".SF", ".RSA", ".DSA", ".EC"))]
         if signatures:
             errors.append("signature files left in jar: %s" % signatures)
@@ -313,12 +330,12 @@ def main(argv) -> int:
                 else:
                     print("reflection ok: %s.%s%s" % (owner, method, desc))
             flat_srg = srg_text.replace("/", ".")
-            names = class_strings(jar.read("RelogicClient.class"))
-            missing = sorted(n for n in names if n not in flat_srg)
+            srg_names = class_strings(jar.read("RelogicClient.class"))
+            missing = sorted(n for n in srg_names if n not in flat_srg)
             if missing:
                 errors.append("reflection names not in srg dump: %s" % ", ".join(missing[:6]))
             else:
-                print("reflection names ok: %d checked against mcp-1.12.2-srg" % len(names))
+                print("reflection names ok: %d checked against mcp-1.12.2-srg" % len(srg_names))
         else:
             print("srg dump not found: SRG name checks skipped")
 

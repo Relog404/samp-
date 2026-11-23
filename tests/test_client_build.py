@@ -82,10 +82,23 @@ class ModuleTest(unittest.TestCase):
         with zipfile.ZipFile(MODULE) as jar:
             names = verify_client.class_strings(jar.read("RelogicClient.class"))
         for name in ("net.minecraft.client.Minecraft", "func_71410_x",
-                     "field_71466_p", "func_73863_a", "func_74303_b"):
+                     "field_71466_p", "func_74303_b"):
             self.assertIn(name, names)
         for name in names:
             self.assertTrue(name.startswith(("net.minecraft.", "func_", "field_")), name)
+
+    def test_injectors_use_srg_names(self):
+        if not MODULE.exists():
+            self.skipTest("module jar отсутствует (собирается в CI)")
+        expected = {
+            "relogic/mixin/MixinGuiMainMenu.class": "func_73863_a",
+            "relogic/mixin/MixinGuiIngame.class": "func_175180_a",
+            "relogic/mixin/MixinMinecraft.class": "func_71407_l",
+        }
+        with zipfile.ZipFile(MODULE) as jar:
+            for entry, name in expected.items():
+                strings = verify_client.class_strings(jar.read(entry))
+                self.assertTrue(any(v.startswith(name) for v in strings), "%s: %s" % (entry, strings))
 
     def test_mixin_targets_declared(self):
         if not MODULE.exists():
