@@ -1,0 +1,16 @@
+================ bit
+Compiled from "SourceFile"
+public class bit {
+  private final double a;
+  private final double b;
+  private int c;
+  private int d;
+  private int e;
+  public bit(bib);
+  public int a();
+  public int b();
+  public double c();
+  public double d();
+  public int e();
+}
+(exit 0)

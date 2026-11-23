@@ -1,0 +1,3 @@
+Error: error reading /tmp/mc/lwjgl.jar; error in opening zip file
+Error: error reading /tmp/mc/lwjgl.jar; error in opening zip file
+Error: class not found: org.lwjgl.input.Keyboard

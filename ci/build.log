@@ -1,0 +1,16 @@
+### toolchain
+openjdk version "1.8.0_514"
+OpenJDK Runtime Environment (Temurin)(build 1.8.0_514-b01)
+OpenJDK 64-Bit Server VM (Temurin)(build 25.514-b01, mixed mode)
+javac 1.8.0_514
+### download
+client.jar bytes: 10180113
+total 9960
+drwxr-xr-x  2 runner runner     4096 Nov 23 15:47 .
+drwxrwxrwt 14 root   root       4096 Nov 23 15:47 ..
+-rw-r--r--  1 runner runner 10180113 Nov 23 15:47 client.jar
+-rw-r--r--  1 runner runner      554 Nov 23 15:47 lwjgl-util.jar
+-rw-r--r--  1 runner runner      554 Nov 23 15:47 lwjgl.jar
+### javap dumps
+### compile
+no sources yet
