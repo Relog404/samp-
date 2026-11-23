@@ -213,8 +213,10 @@ jobs:
               -cp "/tmp/mc/client.jar:/tmp/mc/lwjgl.jar:/tmp/mc/lwjgl-util.jar:Impact-4.9.1-1.12.2.jar" \
               -d build/classes $(find src/mod/java -name '*.java')
             echo "javac exit: $?"
-            find build/classes -name '*.class' | sort
+            if [ -d src/mod/resources ]; then cp -r src/mod/resources/. build/classes/; fi
+            find build/classes -type f | sort
             (cd build/classes && jar cf ../../ci/out/relogic-module.jar . )
+            echo "jar contents:" && unzip -l ci/out/relogic-module.jar | tail -20
             echo "jar exit: $?"
           else
             echo "no sources yet"

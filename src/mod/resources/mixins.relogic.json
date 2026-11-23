@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.7",
+  "package": "relogic.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "verbose": false,
+  "client": [
+    "MixinGuiMainMenu",
+    "MixinGuiIngame",
+    "MixinMinecraft"
+  ]
+}
