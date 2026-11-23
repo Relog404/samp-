@@ -146,75 +146,66 @@ jobs:
 
           echo "### decompiled settings/options"
           javap -c -p -classpath /tmp/mc/client.jar bid > ci/dump/bid-code.txt 2>&1
-          javap -c -p -classpath /tmp/mc/client.jar 'bid\$a' > ci/dump/bid-options-code.txt 2>&1
+          javap -c -p -classpath /tmp/mc/client.jar 'bid$a' > ci/dump/bid-options-code.txt 2>&1
+          javap -p -classpath /tmp/mc/client.jar 'bid$a' > ci/dump/bid-options.txt 2>&1
           javap -c -p -classpath /tmp/mc/client.jar blr > ci/dump/blr-code.txt 2>&1
           wc -l ci/dump/bid-code.txt ci/dump/bid-options-code.txt ci/dump/blr-code.txt
 
-          echo "### mcp_config tsrg"
-          curl -sSL --retry 2 -o /tmp/mcp_config.zip https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_config/1.12/mcp_config-1.12.zip || echo "mcp_config download failed"
-          python3 - <<'PY' > ci/dump/tsrg-map.txt 2>&1
+          echo "### srg mapping (notch <-> srg <-> mcp)"
+          curl -sSL --retry 2 -o /tmp/mcp-srg.zip https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/1.12/mcp-1.12-srg.zip || echo "srg download failed"
+          python3 - <<'PY' > ci/dump/srg-map.txt 2>&1
           import csv, io, zipfile
 
-          try:
-              cfg = zipfile.ZipFile("/tmp/mcp_config.zip")
-          except Exception as exc:
-              print("cannot open mcp_config:", exc)
-              raise SystemExit
-          print("entries:", cfg.namelist()[:20])
-
-          tsrg_text = None
-          for entry in cfg.namelist():
-              if entry.endswith(".tsrg"):
-                  tsrg_text = cfg.read(entry).decode("utf-8", "replace")
-                  print("tsrg:", entry, len(tsrg_text))
-                  break
-          if tsrg_text is None:
-              raise SystemExit
-
+          stable = zipfile.ZipFile("/tmp/mcp.zip")
           names = {}
-          try:
-              stable = zipfile.ZipFile("/tmp/mcp.zip")
-              for f in ("fields.csv", "methods.csv"):
-                  if f in stable.namelist():
-                      for row in csv.DictReader(io.StringIO(stable.read(f).decode("utf-8"))):
-                          names[row["searge"]] = row["name"]
-          except Exception as exc:
-              print("no csv:", exc)
+          for f in ("fields.csv", "methods.csv"):
+              for row in csv.DictReader(io.StringIO(stable.read(f).decode("utf-8"))):
+                  names[row["searge"]] = row["name"]
+          print("mcp names:", len(names))
+
+          z = zipfile.ZipFile("/tmp/mcp-srg.zip")
+          print("entries:", z.namelist()[:10])
+          text = ""
+          for entry in z.namelist():
+              if entry.endswith(".srg"):
+                  text += z.read(entry).decode("utf-8", "replace") + "\n"
+          print("srg bytes:", len(text))
 
           targets = {
               "renderDistanceChunks", "particles", "mipmapLevels", "limitFramerate",
               "fovSetting", "gammaSetting", "smoothCamera", "fancyGraphics",
               "ambientOcclusion", "clouds", "chatOpacity", "chatScale", "guiScale",
-              "anaglyph", "pauseOnLostFocus", "renderDistance", "entityShadows",
-              "saveOptions", "getOptionFloatValue", "getOptionOrdinalValue",
-              "setOptionValue", "getKeyBinding", "drawScreen", "drawString",
+              "anaglyph", "pauseOnLostFocus", "entityShadows", "saveOptions",
+              "getOptionFloatValue", "getOptionOrdinalValue", "setOptionValue",
+              "setOptionValueWithKey", "getKeyBinding", "drawScreen", "drawString",
               "drawRect", "drawCenteredString", "renderGameOverlay", "debugFPS",
-              "debugFPS", "getScaledWidth", "getScaledHeight", "getMinecraft",
-              "isKeyDown", "currentScreen", "fontRenderer", "gameSettings",
-              "buttonList", "displayString", "getStringWidth", "mousePressed",
-              "drawStringWithShadow", "getHoverState", "actionPerformed",
-              "keyTyped", "mouseClicked", "initGui", "setWorldAndResolution",
+              "getScaledWidth", "getScaledHeight", "getMinecraft", "isKeyDown",
+              "fontRenderer", "gameSettings", "buttonList", "displayString",
+              "getStringWidth", "mousePressed", "drawStringWithShadow",
+              "actionPerformed", "keyTyped", "mouseClicked", "initGui",
+              "setWorldAndResolution", "currentScreen", "particles",
+              "renderDistance", "guiScale", "chatVisibility", "mouseSensitivity",
+              "invertMouse", "viewBobbing", "chatLinks", "chatLinksPrompt",
           }
+          interesting_owners = {"bid", "bib", "blr", "blk", "bir", "bja", "biq", "bit", "bip", "bhy"}
 
-          owner = None
-          srg_owner = None
-          for line in tsrg_text.splitlines():
-              if not line.startswith("\t"):
+          for line in text.splitlines():
+              if line.startswith(("FD:", "MD:")):
                   parts = line.split()
-                  if len(parts) >= 2:
-                      owner, srg_owner = parts[0], parts[1]
-                      if owner in ("bid", "bib", "blr", "blk", "bir", "bja", "biq", "bit", "bip"):
-                          print("class:", owner, "=", srg_owner)
-                  continue
-              parts = line.strip().split()
-              if len(parts) < 2 or srg_owner is None:
-                  continue
-              notch_member, srg_member = parts[0], parts[1]
-              mcp = names.get(srg_member)
-              if mcp in targets:
-                  print(f"   {srg_owner} {mcp} -> {owner}/{notch_member}  ({srg_member})")
+                  if len(parts) < 3:
+                      continue
+                  notch, srg = parts[1], parts[2]
+                  srg_member = srg.rsplit("/", 1)[-1]
+                  mcp = names.get(srg_member)
+                  if not mcp or mcp not in targets:
+                      continue
+                  owner_notch = notch.rsplit("/", 1)[0]
+                  if owner_notch not in interesting_owners:
+                      continue
+                  print(f"{parts[0]} {owner_notch}/{notch.rsplit('/', 1)[-1]}  <=  {mcp}  ({srg_member})")
           PY
-          grep -c . ci/dump/tsrg-map.txt
+          head -40 ci/dump/srg-map.txt
+          grep -c . ci/dump/srg-map.txt
 
           echo "### compile"
           if [ -d src/mod/java ] && [ -n "$(find src/mod/java -name '*.java' -print -quit)" ]; then
