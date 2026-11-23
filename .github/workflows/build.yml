@@ -134,6 +134,72 @@ jobs:
           PY
           head -5 ci/dump/mcp-map.txt
 
+          echo "### mcp_config tsrg"
+          curl -sSL --retry 2 -o /tmp/mcp_config.zip https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_config/1.12/mcp_config-1.12.zip || echo "mcp_config download failed"
+          python3 - <<'PY' > ci/dump/tsrg-map.txt 2>&1
+          import csv, io, zipfile
+
+          try:
+              cfg = zipfile.ZipFile("/tmp/mcp_config.zip")
+          except Exception as exc:
+              print("cannot open mcp_config:", exc)
+              raise SystemExit
+          print("entries:", cfg.namelist()[:20])
+
+          tsrg_text = None
+          for entry in cfg.namelist():
+              if entry.endswith(".tsrg"):
+                  tsrg_text = cfg.read(entry).decode("utf-8", "replace")
+                  print("tsrg:", entry, len(tsrg_text))
+                  break
+          if tsrg_text is None:
+              raise SystemExit
+
+          names = {}
+          try:
+              stable = zipfile.ZipFile("/tmp/mcp.zip")
+              for f in ("fields.csv", "methods.csv"):
+                  if f in stable.namelist():
+                      for row in csv.DictReader(io.StringIO(stable.read(f).decode("utf-8"))):
+                          names[row["searge"]] = row["name"]
+          except Exception as exc:
+              print("no csv:", exc)
+
+          targets = {
+              "renderDistanceChunks", "particles", "mipmapLevels", "limitFramerate",
+              "fovSetting", "gammaSetting", "smoothCamera", "fancyGraphics",
+              "ambientOcclusion", "clouds", "chatOpacity", "chatScale", "guiScale",
+              "anaglyph", "pauseOnLostFocus", "renderDistance", "entityShadows",
+              "saveOptions", "getOptionFloatValue", "getOptionOrdinalValue",
+              "setOptionValue", "getKeyBinding", "drawScreen", "drawString",
+              "drawRect", "drawCenteredString", "renderGameOverlay", "debugFPS",
+              "debugFPS", "getScaledWidth", "getScaledHeight", "getMinecraft",
+              "isKeyDown", "currentScreen", "fontRenderer", "gameSettings",
+              "buttonList", "displayString", "getStringWidth", "mousePressed",
+              "drawStringWithShadow", "getHoverState", "actionPerformed",
+              "keyTyped", "mouseClicked", "initGui", "setWorldAndResolution",
+          }
+
+          owner = None
+          srg_owner = None
+          for line in tsrg_text.splitlines():
+              if not line.startswith("\t"):
+                  parts = line.split()
+                  if len(parts) >= 2:
+                      owner, srg_owner = parts[0], parts[1]
+                      if owner in ("bid", "bib", "blr", "blk", "bir", "bja", "biq", "bit", "bip"):
+                          print("class:", owner, "=", srg_owner)
+                  continue
+              parts = line.strip().split()
+              if len(parts) < 2 or srg_owner is None:
+                  continue
+              notch_member, srg_member = parts[0], parts[1]
+              mcp = names.get(srg_member)
+              if mcp in targets:
+                  print(f"   {srg_owner} {mcp} -> {owner}/{notch_member}  ({srg_member})")
+          PY
+          grep -c . ci/dump/tsrg-map.txt
+
           echo "### compile"
           if [ -d src/mod/java ] && [ -n "$(find src/mod/java -name '*.java' -print -quit)" ]; then
             javac -encoding UTF-8 -source 8 -target 8 -nowarn \
