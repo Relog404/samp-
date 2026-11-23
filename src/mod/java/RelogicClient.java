@@ -1,3 +1,4 @@
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -301,6 +302,7 @@ public final class RelogicClient {
         private final String option;
         private final boolean floating;
         private final float step;
+        private Object constant;
 
         Row(String label, String option, boolean floating, float step) {
             this.label = label;
@@ -309,11 +311,15 @@ public final class RelogicClient {
             this.step = step;
         }
 
-        private bid$a resolve() {
-            bid$a[] all = bid$a.values();
+        private Object resolve() {
+            if (constant != null) {
+                return constant;
+            }
+            Object[] all = OptionAccess.constants();
             for (int i = 0; i < all.length; i++) {
-                if (all[i].name().equals(option)) {
-                    return all[i];
+                if (all[i] != null && ((Enum<?>) all[i]).name().equals(option)) {
+                    constant = all[i];
+                    return constant;
                 }
             }
             return null;
@@ -325,23 +331,25 @@ public final class RelogicClient {
                 if (mc == null || mc.t == null) {
                     return;
                 }
-                bid$a opt = resolve();
+                Object opt = resolve();
                 if (opt == null) {
                     return;
                 }
                 if (!floating) {
-                    mc.t.a(opt, dir);
+                    OptionAccess.setInt(mc.t, opt, dir);
                     return;
                 }
-                float current = mc.t.a(opt);
+                float current = OptionAccess.getFloat(mc.t, opt);
                 float next = current + dir * step;
-                if (next < opt.e()) {
-                    next = opt.e();
+                float min = OptionAccess.min(opt);
+                float max = OptionAccess.max(opt);
+                if (next < min) {
+                    next = min;
                 }
-                if (next > opt.f()) {
-                    next = opt.f();
+                if (next > max) {
+                    next = max;
                 }
-                mc.t.a(opt, next);
+                OptionAccess.setFloat(mc.t, opt, next);
             } catch (Throwable t) {
                 remember(t);
             }
@@ -353,11 +361,11 @@ public final class RelogicClient {
                 if (mc == null || mc.t == null) {
                     return "-";
                 }
-                bid$a opt = resolve();
+                Object opt = resolve();
                 if (opt == null) {
                     return "-";
                 }
-                float v = mc.t.a(opt);
+                float v = OptionAccess.getFloat(mc.t, opt);
                 if ("GRAPHICS".equals(option)) {
                     return v > 0.5F ? "fancy" : "fast";
                 }
@@ -369,6 +377,66 @@ public final class RelogicClient {
                 remember(t);
                 return "-";
             }
+        }
+    }
+
+    /** Reflective access to {@code bid} (GameSettings) and {@code bid$a} (its Options enum). */
+    private static final class OptionAccess {
+        private static Class<?> type;
+        private static Object[] constants;
+        private static Method getFloat;
+        private static Method setInt;
+        private static Method setFloat;
+        private static Method min;
+        private static Method max;
+        private static boolean ready;
+
+        private static void prepare() {
+            if (ready) {
+                return;
+            }
+            ready = true;
+            try {
+                type = Class.forName("bid$a");
+                constants = type.getEnumConstants();
+                getFloat = bid.class.getMethod("a", type);
+                setInt = bid.class.getMethod("a", type, int.class);
+                setFloat = bid.class.getMethod("a", type, float.class);
+                min = type.getMethod("e");
+                max = type.getMethod("f");
+            } catch (Throwable ignored) {
+                constants = new Object[0];
+            }
+        }
+
+        static Object[] constants() {
+            prepare();
+            return constants;
+        }
+
+        static float getFloat(Object settings, Object option) throws Exception {
+            prepare();
+            return ((Float) getFloat.invoke(settings, option)).floatValue();
+        }
+
+        static void setInt(Object settings, Object option, int value) throws Exception {
+            prepare();
+            setInt.invoke(settings, option, Integer.valueOf(value));
+        }
+
+        static void setFloat(Object settings, Object option, float value) throws Exception {
+            prepare();
+            setFloat.invoke(settings, option, Float.valueOf(value));
+        }
+
+        static float min(Object option) throws Exception {
+            prepare();
+            return ((Float) min.invoke(option)).floatValue();
+        }
+
+        static float max(Object option) throws Exception {
+            prepare();
+            return ((Float) max.invoke(option)).floatValue();
         }
     }
 

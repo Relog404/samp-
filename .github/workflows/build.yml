@@ -209,8 +209,8 @@ jobs:
 
           echo "### compile"
           if [ -d src/mod/java ] && [ -n "$(find src/mod/java -name '*.java' -print -quit)" ]; then
-            javac -encoding UTF-8 -source 8 -target 8 -nowarn \
-              -cp "/tmp/mc/client.jar:/tmp/mc/lwjgl.jar:/tmp/mc/lwjgl-util.jar:Impact-4.9.1-1.12.2.jar" \
+            javac -encoding UTF-8 -source 8 -target 8 -nowarn -proc:none \
+              -cp "/tmp/mc/client.jar:/tmp/mc/*:Impact-4.9.1-1.12.2.jar" \
               -d build/classes $(find src/mod/java -name '*.java')
             echo "javac exit: $?"
             if [ -d src/mod/resources ]; then cp -r src/mod/resources/. build/classes/; fi
