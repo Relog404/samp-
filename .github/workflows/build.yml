@@ -1,0 +1,46 @@
+name: build
+
+on:
+  push:
+    branches: ["arena/07b9612e-samp"]
+  workflow_dispatch:
+
+jobs:
+  probe:
+    name: probe toolchain + MC names
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup JDK 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "8"
+
+      - name: Toolchain
+        run: |
+          java -version
+          javac -version
+
+      - name: Fetch Minecraft 1.12.2 client jar
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request
+          man = json.load(urllib.request.urlopen("https://launchermeta.mojang.com/mc/game/version_manifest.json"))
+          entry = [v for v in man["versions"] if v["id"] == "1.12.2"][0]
+          meta = json.load(urllib.request.urlopen(entry["url"]))
+          data = urllib.request.urlopen(meta["downloads"]["client"]["url"]).read()
+          open("/tmp/client.jar", "wb").write(data)
+          print("client.jar bytes:", len(data))
+          libs = [l["name"] for l in meta["libraries"] if "natives" not in l.get("name", "")]
+          open("/tmp/libs.txt", "w").write("\n".join(libs))
+          print("libraries:", len(libs))
+          PY
+
+      - name: Dump signatures of the classes we hook
+        run: |
+          for c in bib blk bja bjb bid bip biq bit bzf bze; do
+            echo "================ $c"
+            javap -p -classpath /tmp/client.jar "$c" 2>&1 | head -150
+          done
