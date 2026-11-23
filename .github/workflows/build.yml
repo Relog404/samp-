@@ -9,9 +9,7 @@ permissions:
   contents: write
 
 env:
-  # какие классы обфусцированного клиента нам нужны — дампим их сигнатуры
-  PROBE_CLASSES: >-
-    bib blk bja bjb bid bip biq bit blm bze bzf bje bjd bjc
+  PROBE_CLASSES: "bib blk bja bjb bid bip biq bit blm bze bzf bje bjd bjc"
 
 jobs:
   build:
@@ -28,67 +26,71 @@ jobs:
           distribution: temurin
           java-version: "8"
 
-      - name: Toolchain
+      - name: Prepare (download MC, LWJGL, dump signatures, compile)
         run: |
+          set +e
+          mkdir -p ci/dump ci/out build/classes
+          exec > >(tee ci/build.log) 2>&1
+
+          echo "### toolchain"
           java -version
           javac -version
 
-      - name: Fetch Minecraft 1.12.2 client jar + LWJGL
-        run: |
+          echo "### download"
           mkdir -p /tmp/mc
           python3 - <<'PY'
           import json, urllib.request
-          man = json.load(urllib.request.urlopen("https://launchermeta.mojang.com/mc/game/version_manifest.json"))
-          entry = [v for v in man["versions"] if v["id"] == "1.12.2"][0]
-          meta = json.load(urllib.request.urlopen(entry["url"]))
-          data = urllib.request.urlopen(meta["downloads"]["client"]["url"]).read()
-          open("/tmp/mc/client.jar", "wb").write(data)
-          print("client.jar", len(data))
+          try:
+              man = json.load(urllib.request.urlopen("https://launchermeta.mojang.com/mc/game/version_manifest.json"))
+              entry = [v for v in man["versions"] if v["id"] == "1.12.2"][0]
+              meta = json.load(urllib.request.urlopen(entry["url"]))
+              data = urllib.request.urlopen(meta["downloads"]["client"]["url"]).read()
+              open("/tmp/mc/client.jar", "wb").write(data)
+              print("client.jar bytes:", len(data))
+          except Exception as exc:
+              print("download failed:", exc)
           PY
-          curl -sSL -o /tmp/mc/lwjgl.jar https://repo1.maven.org/maven2/org/lwjgl/lwjgl/lwjgl/2.9.4-nightly-20150209/lwjgl-2.9.4-nightly-20150209.jar
-          curl -sSL -o /tmp/mc/lwjgl-util.jar https://repo1.maven.org/maven2/org/lwjgl/lwjgl/lwjgl_util/2.9.4-nightly-20150209/lwjgl_util-2.9.4-nightly-20150209.jar
+          curl -sSL --retry 2 -o /tmp/mc/lwjgl.jar https://repo1.maven.org/maven2/org/lwjgl/lwjgl/lwjgl/2.9.4-nightly-20150209/lwjgl-2.9.4-nightly-20150209.jar || echo "lwjgl download failed"
+          curl -sSL --retry 2 -o /tmp/mc/lwjgl-util.jar https://repo1.maven.org/maven2/org/lwjgl/lwjgl/lwjgl_util/2.9.4-nightly-20150209/lwjgl_util-2.9.4-nightly-20150209.jar || echo "lwjgl_util download failed"
           ls -la /tmp/mc
 
-      - name: Dump signatures
-        run: |
-          mkdir -p ci/dump
+          echo "### javap dumps"
           for c in $PROBE_CLASSES; do
             echo "================ $c" > "ci/dump/$c.txt"
-            javap -p -classpath /tmp/mc/client.jar "$c" >> "ci/dump/$c.txt" 2>&1 || echo "MISSING $c" >> "ci/dump/$c.txt"
+            javap -p -classpath /tmp/mc/client.jar "$c" >> "ci/dump/$c.txt" 2>&1
+            echo "(exit $?)" >> "ci/dump/$c.txt"
           done
           javap -p -classpath /tmp/mc/lwjgl.jar org.lwjgl.input.Keyboard > ci/dump/lwjgl-keyboard.txt 2>&1
           javap -p -classpath /tmp/mc/lwjgl.jar org.lwjgl.input.Mouse > ci/dump/lwjgl-mouse.txt 2>&1
-          wc -l ci/dump/*.txt
 
-      - name: Compile mod sources (if any)
-        run: |
-          mkdir -p build/classes
+          echo "### compile"
           if [ -d src/mod/java ] && [ -n "$(find src/mod/java -name '*.java' -print -quit)" ]; then
             javac -encoding UTF-8 -source 8 -target 8 -nowarn \
               -cp "/tmp/mc/client.jar:/tmp/mc/lwjgl.jar:/tmp/mc/lwjgl-util.jar:Impact-4.9.1-1.12.2.jar" \
               -d build/classes $(find src/mod/java -name '*.java')
-            echo "compiled:"; find build/classes -name '*.class' | sort
+            echo "javac exit: $?"
+            find build/classes -name '*.class' | sort
+            (cd build/classes && jar cf ../../ci/out/relogic-module.jar . )
+            echo "jar exit: $?"
           else
             echo "no sources yet"
           fi
 
-      - name: Package mod jar (if any)
+      - name: Commit results
+        if: always()
         run: |
-          if [ -d build/classes ] && [ -n "$(find build/classes -name '*.class' -print -quit)" ]; then
-            mkdir -p ci/out
-            (cd build/classes && jar cf ../../ci/out/relogic-module.jar .)
-            ls -la ci/out
-          fi
-
-      - name: Commit results back to branch
-        run: |
+          set +e
           git config user.name "relogic-ci"
           git config user.email "relogic-ci@users.noreply.github.com"
-          rm -rf ci/dump/.* 2>/dev/null || true
-          git add -f ci build/classes 2>/dev/null || git add -f ci
+          git add -f ci
+          git status --short | head -40
           if git diff --cached --quiet; then
             echo "nothing to commit"
           else
             git commit -m "ci: build output [ci-skip]"
             git push
           fi
+
+      - name: Show captured log
+        if: always()
+        run: cat ci/build.log || true
