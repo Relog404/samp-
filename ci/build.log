@@ -10,13 +10,13 @@ lib: org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209 173887
 lib: org.lwjgl.lwjgl:lwjgl:2.9.2-nightly-20140822 1045632
 lib: org.lwjgl.lwjgl:lwjgl_util:2.9.2-nightly-20140822 173887
 total 12344
-drwxr-xr-x  2 runner runner     4096 Nov 23 16:02 .
-drwxrwxrwt 14 root   root       4096 Nov 23 16:02 ..
--rw-r--r--  1 runner runner 10180113 Nov 23 16:02 client.jar
--rw-r--r--  1 runner runner  1045632 Nov 23 16:02 lwjgl-2.9.2-nightly-20140822.jar
--rw-r--r--  1 runner runner  1047168 Nov 23 16:02 lwjgl-2.9.4-nightly-20150209.jar
--rw-r--r--  1 runner runner   173887 Nov 23 16:02 lwjgl_util-2.9.2-nightly-20140822.jar
--rw-r--r--  1 runner runner   173887 Nov 23 16:02 lwjgl_util-2.9.4-nightly-20150209.jar
+drwxr-xr-x  2 runner runner     4096 Nov 23 16:05 .
+drwxrwxrwt 13 root   root       4096 Nov 23 16:05 ..
+-rw-r--r--  1 runner runner 10180113 Nov 23 16:05 client.jar
+-rw-r--r--  1 runner runner  1045632 Nov 23 16:05 lwjgl-2.9.2-nightly-20140822.jar
+-rw-r--r--  1 runner runner  1047168 Nov 23 16:05 lwjgl-2.9.4-nightly-20150209.jar
+-rw-r--r--  1 runner runner   173887 Nov 23 16:05 lwjgl_util-2.9.2-nightly-20140822.jar
+-rw-r--r--  1 runner runner   173887 Nov 23 16:05 lwjgl_util-2.9.4-nightly-20150209.jar
 ### javap dumps
 ### mcp mappings
 zip entries: ['fields.csv', 'methods.csv', 'params.csv']
@@ -69,18 +69,52 @@ jar contents:
 Archive:  ci/out/relogic-module.jar
   Length      Date    Time    Name
 ---------  ---------- -----   ----
-        0  2026-11-23 16:02   META-INF/
-       58  2026-11-23 16:02   META-INF/MANIFEST.MF
-        0  2026-11-23 16:02   relogic/
-        0  2026-11-23 16:02   relogic/mixin/
-      746  2026-11-23 16:02   relogic/mixin/MixinGuiIngame.class
-      710  2026-11-23 16:02   relogic/mixin/MixinMinecraft.class
-     1210  2026-11-23 16:02   relogic/mixin/Bridge.class
-      752  2026-11-23 16:02   relogic/mixin/MixinGuiMainMenu.class
-     2292  2026-11-23 16:02   RelogicClient$Row.class
-     8238  2026-11-23 16:02   RelogicClient.class
-     2104  2026-11-23 16:02   RelogicClient$OptionAccess.class
-      216  2026-11-23 16:02   mixins.relogic.json
+        0  2026-11-23 16:05   META-INF/
+       58  2026-11-23 16:05   META-INF/MANIFEST.MF
+        0  2026-11-23 16:05   relogic/
+        0  2026-11-23 16:05   relogic/mixin/
+      746  2026-11-23 16:05   relogic/mixin/MixinGuiIngame.class
+      710  2026-11-23 16:05   relogic/mixin/MixinMinecraft.class
+     1210  2026-11-23 16:05   relogic/mixin/Bridge.class
+      752  2026-11-23 16:05   relogic/mixin/MixinGuiMainMenu.class
+     2292  2026-11-23 16:05   RelogicClient$Row.class
+     8238  2026-11-23 16:05   RelogicClient.class
+     2104  2026-11-23 16:05   RelogicClient$OptionAccess.class
+      216  2026-11-23 16:05   mixins.relogic.json
 ---------                     -------
     16326                     12 files
+### assemble client jar
+base  : /home/runner/work/samp-/samp-/Impact-4.9.1-1.12.2.jar
+module: ci/out/relogic-module.jar (8 entries)
+out   : ci/out/RELOG-IC-4.9.1-1.12.2.jar
+replaced: 0, added: 8
+MixinConfigs -> Manifest-Version: 1.0
+MixinConfigs: mixins.capi.json, mixins.impact.json, 
+ mixins.baritone.json, mixins.relogic.json
+TweakClass: org.spongepowered.asm.launch.MixinTweaker
+
+
+build_client exit: 0
+### verify client jar (with real client.jar targets)
+entries: 4249 | base: 4241 | configs: ['mixins.baritone.json', 'mixins.capi.json', 'mixins.impact.json', 'mixins.relogic.json']
+mixins: ['MixinGuiMainMenu', 'MixinGuiIngame', 'MixinMinecraft']
+target ok: blr.a(IIF)V
+target ok: biq.a(F)V
+target ok: bib.t()V
+
+OK: клиент собран корректно
+verify_client exit: 0
+### unit tests
+entries: 6 | changed: 2
+mixins kept: 2 | username/branding mixins removed: []
+log4j Root level: ['off']
+manifest tweak: True
+
+FAILED:
+  - mixin classes missing from jar: gui.MixinNope
+entries: 4249 | base: 4241 | configs: ['mixins.baritone.json', 'mixins.capi.json', 'mixins.impact.json', 'mixins.relogic.json']
+mixins: ['MixinGuiMainMenu', 'MixinGuiIngame', 'MixinMinecraft']
+client.jar not supplied: target/method checks skipped
+
+OK: клиент собран корректно
 jar exit: 0
