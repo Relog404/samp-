@@ -1,0 +1,4 @@
+404 1265 https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/1.12/mcp_config-1.12.zip
+404 1265 https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_config/1.12/mcp_config-1.12.zip
+200 650427 https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/1.12/mcp-1.12-srg.zip
+200 371642 https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_snapshot/20171003-1.12/mcp_snapshot-20171003-1.12.zip

@@ -1,0 +1,1 @@
+Error: class not found: bid\$a

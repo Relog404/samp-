@@ -10,19 +10,25 @@ lib: org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209 173887
 lib: org.lwjgl.lwjgl:lwjgl:2.9.2-nightly-20140822 1045632
 lib: org.lwjgl.lwjgl:lwjgl_util:2.9.2-nightly-20140822 173887
 total 12344
-drwxr-xr-x  2 runner runner     4096 Nov 23 15:52 .
-drwxrwxrwt 13 root   root       4096 Nov 23 15:52 ..
--rw-r--r--  1 runner runner 10180113 Nov 23 15:52 client.jar
--rw-r--r--  1 runner runner  1045632 Nov 23 15:52 lwjgl-2.9.2-nightly-20140822.jar
--rw-r--r--  1 runner runner  1047168 Nov 23 15:52 lwjgl-2.9.4-nightly-20150209.jar
--rw-r--r--  1 runner runner   173887 Nov 23 15:52 lwjgl_util-2.9.2-nightly-20140822.jar
--rw-r--r--  1 runner runner   173887 Nov 23 15:52 lwjgl_util-2.9.4-nightly-20150209.jar
+drwxr-xr-x  2 runner runner     4096 Nov 23 15:53 .
+drwxrwxrwt 13 root   root       4096 Nov 23 15:53 ..
+-rw-r--r--  1 runner runner 10180113 Nov 23 15:53 client.jar
+-rw-r--r--  1 runner runner  1045632 Nov 23 15:53 lwjgl-2.9.2-nightly-20140822.jar
+-rw-r--r--  1 runner runner  1047168 Nov 23 15:53 lwjgl-2.9.4-nightly-20150209.jar
+-rw-r--r--  1 runner runner   173887 Nov 23 15:53 lwjgl_util-2.9.2-nightly-20140822.jar
+-rw-r--r--  1 runner runner   173887 Nov 23 15:53 lwjgl_util-2.9.4-nightly-20150209.jar
 ### javap dumps
 ### mcp mappings
 zip entries: ['fields.csv', 'methods.csv', 'params.csv']
 ----
 mcp names: 19659
 target searge: {'mipmapLevels': ['field_147636_j', 'field_151442_I'], 'renderDistanceChunks': ['field_151451_c', 'field_72739_F'], 'ambientOcclusion': ['field_177562_c', 'field_178322_i', 'field_188621_a', 'field_74348_k'], 'smoothCamera': ['field_74326_T'], 'gammaSetting': ['field_74333_Y'], 'fovSetting': ['field_74334_X'], 'guiScale': ['field_74335_Z'], 'anaglyph': ['field_74337_g'], 'clouds': ['field_74345_l'], 'fancyGraphics': ['field_74347_j'], 'limitFramerate': ['field_74350_i'], 'chatOpacity': ['field_74357_r'], 'pauseOnLostFocus': ['field_82881_y'], 'chatScale': ['field_96691_E'], 'mousePressed': ['func_146116_c', 'func_148278_a'], 'drawScreen': ['func_148128_a', 'func_73863_a'], 'drawString': ['func_154322_b', 'func_175065_a', 'func_73731_b', 'func_78276_b'], 'drawCenteredString': ['func_154325_a', 'func_73732_a'], 'drawStringWithShadow': ['func_175063_a'], 'renderGameOverlay': ['func_175180_a'], 'getMinecraft': ['func_192989_b', 'func_193295_e', 'func_71410_x'], 'drawRect': ['func_73734_a'], 'initGui': ['func_73866_w_'], 'getKeyBinding': ['func_74297_c'], 'saveOptions': ['func_74303_b'], 'getScaledWidth': ['func_78326_a'], 'getScaledHeight': ['func_78328_b']}
+### url probe
+### decompiled settings/options
+  4475 ci/dump/bid-code.txt
+     1 ci/dump/bid-options-code.txt
+  2044 ci/dump/blr-code.txt
+  6520 total
 ### mcp_config tsrg
 1
 ### compile
