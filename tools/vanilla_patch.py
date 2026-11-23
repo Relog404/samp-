@@ -170,7 +170,12 @@ def patch(src: str, dst: str, strip_all_screens: bool = False, verbose: bool = T
 
             zi = zipfile.ZipInfo(name, date_time=FIXED_DATE)
             zi.compress_type = zipfile.ZIP_DEFLATED
-            zi.external_attr = info.external_attr
+            # в оригинале права не заданы (external_attr == 0); zipfile сам
+            # подставляет 0600, поэтому выставляем явные 0644/0755
+            if name.endswith("/"):
+                zi.external_attr = (0o40755 << 16) | 0x10
+            else:
+                zi.external_attr = 0o100644 << 16
             zout.writestr(zi, data)
 
     if verbose:
