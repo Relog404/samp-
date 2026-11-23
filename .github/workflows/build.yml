@@ -134,6 +134,22 @@ jobs:
           PY
           head -5 ci/dump/mcp-map.txt
 
+          echo "### url probe"
+          for u in \
+            "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/1.12/mcp_config-1.12.zip" \
+            "https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_config/1.12/mcp_config-1.12.zip" \
+            "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/1.12/mcp-1.12-srg.zip" \
+            "https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_snapshot/20171003-1.12/mcp_snapshot-20171003-1.12.zip"; do
+            code=$(curl -sSL -o /tmp/probe.bin -w "%{http_code}" --max-time 60 "$u" || echo ERR)
+            echo "$code $(stat -c%s /tmp/probe.bin 2>/dev/null) $u"
+          done > ci/dump/urls.txt 2>&1
+
+          echo "### decompiled settings/options"
+          javap -c -p -classpath /tmp/mc/client.jar bid > ci/dump/bid-code.txt 2>&1
+          javap -c -p -classpath /tmp/mc/client.jar 'bid\$a' > ci/dump/bid-options-code.txt 2>&1
+          javap -c -p -classpath /tmp/mc/client.jar blr > ci/dump/blr-code.txt 2>&1
+          wc -l ci/dump/bid-code.txt ci/dump/bid-options-code.txt ci/dump/blr-code.txt
+
           echo "### mcp_config tsrg"
           curl -sSL --retry 2 -o /tmp/mcp_config.zip https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_config/1.12/mcp_config-1.12.zip || echo "mcp_config download failed"
           python3 - <<'PY' > ci/dump/tsrg-map.txt 2>&1
